@@ -10,10 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# 追加BASE_DIR路径
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -24,7 +28,7 @@ SECRET_KEY = 'django-insecure--_1f%o0k*2&z)$!r*yz*k_rf_5!i&q-o*03$s&0we0%h6ugls7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'pdd42.bolinkang.cn']
 
 # Application definition
 
@@ -35,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 使用追加的BASE_DIR注册user子应用
+    'users',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -199,7 +206,7 @@ LOGGING = {
     # 日志处理方法
     'handlers': {  # 日志处理方法
         'console': {  # 向终端中输出日志
-            'level': 'INFO',  # 输出级别INFO
+            'level': 'ERROR',  # 输出级别INFO
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
@@ -224,5 +231,8 @@ LOGGING = {
     }
 }
 
-
+# 重新定义迁移的用户模型类
+# 原: 在django.conf.global_settings 内的 AUTH_USER_MODEL = 'auth.User'
+# AUTH_USER_MODEL = '应用名.模型类名'
+AUTH_USER_MODEL = 'users.User'
 
