@@ -34,37 +34,58 @@ var vm = new Vue({
         // 检查username
         check_username(){
             // 正则匹配格式/^ .... $/
+            // 匹配文本[a-zA-Z_汉字]
             let re = /^[\w]{5,20}$/
+            // 匹配纯数字
             let re2 = /^[\d]{5,20}$/
-            if (re.test(this.username)){
-
+            // 匹配空输入
+            let re3 = /^$/
+            
+            // 判断是否输入空值
+            if (re3.test(this.username)){
+                // 输入空值不显示错误信息
                 this.error_name = false
-                if (re2.test(this.username)){
+
+            }else{
+                if (re.test(this.username)){
+
+                    this.error_name = false
+                    if (re2.test(this.username)){
+                        
+                        this.error_name_message = '用户名不能全为数字!'
+                        this.error_name = true
+                    }
                     
-                    this.error_name_message = '用户名不能全为数字!'
+                }else{
+                    
+                    this.error_name_message = '请输入5-20个字符的用户名(不能使用特殊字符)'
                     this.error_name = true
                 }
-                
-            }else{
-                
-                this.error_name_message = '请输入5-20个字符的用户名(不能使用特殊字符)'
-                this.error_name = true
             }
+            
         },
         check_password1(){
             let re = /^[0-9a-zA-z@._]{8,20}$/
-            if (re.test(this.password1)){
+            let re2 = /^$/
+            
+            if (re2.test(this.password1)){
                 this.error_password1 = false
             }else{
-                this.error_password1 = true
+                if (re.test(this.password1)){
+                    this.error_password1 = false
+                }else{
+                    this.error_password1 = true
+                }
             }
+            
         },
         check_password2(){
-            if (this.password1 != this.password2){
-                this.error_password2 = true
-            }else{
-                this.error_password2 = false
-            }
+                if (this.password1 != this.password2){
+                    this.error_password2 = true
+                }else{
+                    this.error_password2 = false
+                }
+            
         },
         check_phone_num(){
 
