@@ -207,7 +207,7 @@ LOGGING = {
     # 日志处理方法
     'handlers': {  # 日志处理方法
         'console': {  # 向终端中输出日志
-            'level': 'ERROR',  # 输出级别INFO
+            'level': 'DEBUG',  # 输出级别INFO
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
@@ -236,4 +236,7 @@ LOGGING = {
 # 原: 在django.conf.global_settings 内的 AUTH_USER_MODEL = 'auth.User'
 # AUTH_USER_MODEL = '应用名.模型类名'
 AUTH_USER_MODEL = 'users.User'
+
+# ---------session过期时间----------
+SESSION_COOKIE_AGE = 172800
 

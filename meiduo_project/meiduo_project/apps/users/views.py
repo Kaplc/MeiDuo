@@ -5,15 +5,29 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from django.urls import reverse
 from django.views import View
-from django.http import HttpResponseForbidden
+from django import http
+from meiduo_project.settings.response_code import *
 import re
 
 from .models import User
 
 
 class UsernameCountView(View):
-    def get(self, request):
-        pass
+    """判断用户名是否重复注册"""
+
+    def get(self, request, username):
+        """
+        :param username: 接收username参数
+        :param request: 请求头
+        :return: json
+        """
+        # 获取数据库相同username的数量并返回
+        count = User.objects.filter(username=username).count()
+        return http.JsonResponse({
+            'code': RETCODE,
+            'errmsg': 'OK',
+            'count': count
+        })
 
 
 class RegisterView(View):
@@ -33,24 +47,24 @@ class RegisterView(View):
         # --校验参数--
         # 判断参数齐全
         if not all([username, password, password2, mobile, allow]):
-            return HttpResponseForbidden('缺少参数')
+            return http.HttpResponseForbidden('缺少参数')
         # 判断用户名是否合法前后端一致
         if re.match(r'^[\d]{5,20}$', username):  # 是全数字
-            return HttpResponseForbidden('用户名格式错误')
+            return http.HttpResponseForbidden('用户名格式错误')
         elif not re.match(r'^[a-zA-Z0-9]{5,20}$', username):
-            return HttpResponseForbidden('用户名格式错误')
+            return http.HttpResponseForbidden('用户名格式错误')
         # 判断密码是否是8-20个数字
         if not re.match(r'^[0-9a-zA-z@._]{8,20}', password):
-            return HttpResponseForbidden('密码格式错误')
+            return http.HttpResponseForbidden('密码格式错误')
         # 判断两次密码是否一致
         if not (password == password2):
-            return HttpResponseForbidden('密码不一致')
+            return http.HttpResponseForbidden('密码不一致')
         # 判断手机号是否合法
         if not re.match(r'^1[3-9]\d{9}$', mobile):
-            return HttpResponseForbidden('手机号格式错误')
+            return http.HttpResponseForbidden('手机号格式错误')
         # 判断是否勾选用户协议
         if allow != 'on':
-            return HttpResponseForbidden('用户协议未同意')
+            return http.HttpResponseForbidden('用户协议未同意')
 
         # ----保存注册数据-----
         # 可能写入失败使用try

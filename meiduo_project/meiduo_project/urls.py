@@ -18,7 +18,8 @@ from django.urls import path, re_path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path('^', include('contents.urls', namespace='contents')),
-    re_path(r'^register.html', include('users.urls', namespace='users'))
+    re_path(r'^', include('contents.urls', namespace='contents')),
+    re_path(r'^register.html/', include('users.urls', namespace='users'))
+
 
 ]

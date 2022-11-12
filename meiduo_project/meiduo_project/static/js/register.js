@@ -2,10 +2,6 @@ var vm = new Vue({
     el: '#app',
     delimiters: ['[[', ']]'],
     data: {
-        // 空值判断开关
-        isnull_username: true,
-        isnull_password1: true,
-        isnull_phone: true,
 
         // v-model
         username: '',
@@ -54,26 +50,45 @@ var vm = new Vue({
             if (re3.test(this.username)){ // 是空值
                 
                 // 输入空值不显示错误信息
-                this.error_name = false
-                this.isnull_username = true
-                
-            }else{
-                // 2) 判断是否全数字
-                if (re2.test(this.username)){ // 是全数字
+                this.error_name_message = ''
+                this.error_name_show = true
+            }
+            // 2) 判断是否全数字
+            if (this.error_name_show == false){ // 判断上一条if是否错误
+                if(re2.test(this.username)){
                     this.error_name_message = '用户名不能全为数字!'
                     this.error_name_show = true
-                }else{
-                    // 3) 判断是否符合正则
-                    if (re.test(this.username)){ // 符合条件
-                        this.error_name_show = false
-                        // 关闭空值
-                        this.isnull_username = false
-                    }else{ 
-                        this.error_name_message = '请输入5-20个英文字母,数字的组合字符的用户名'
-                        this.error_name_show = true
-                    }
+                }
+                
+            }
+            // 判断是否符合正则表达式
+            if(this.error_name_show == false){
+                if(!re.test(this.username)){ // 不符合正则
+                    this.error_name_message = '请输入5-20个英文字母,数字的组合字符的用户名'
+                    this.error_name_show = true
                 }
             }
+            // 判断用户名是否重复注册
+            if(this.error_name_show == false){
+                let url = 'usernames/' + this.username + '/count/'
+                // det(请求地址, 返回的数据类型)
+                axios.get(url,{
+                    responseType: 'json'
+                }).then((response) => { // 成功执行
+                    if(response.data.count == 1){
+                        this.error_name_message == '用户名已存在, 请直接登陆'
+                        this.error_name_show == true
+                    }else{
+                        this.error_name_show == false
+                    }
+                }).catch(() => { // 失败执行
+                    console.log(error.response)
+                })
+            }
+
+                        
+
+            
             
             
             
@@ -152,7 +167,7 @@ var vm = new Vue({
 			// 先检查allow是否同意
             if(this.check_allow()){ // 再检查参数填写完整性
                 // 填入空值禁用提交
-                if(this.isnull_username == true || this.isnull_password1 == true || this.isnull_phone == true){
+                if(this.username == '' || this.password1 == '' || this.password2 == '' || this.phone_num == ''){
                     this.error_allow_message = '注册信息未填写完整!'
                     this.error_allow_show = true
 
