@@ -20,13 +20,16 @@ var vm = new Vue({
         error_pic_code_show: false,
         error_message_code_show: false,
         error_allow_show: false,
+        error_register_show: false,
         
 
-        // 变量
+        // 错误信息变量
         error_name_message: '',
+        error_password1_message: '',
         error_phone_message: '',
         register_errmsg: '',
         error_allow_message: '',
+        error_register: '',
         
 
 
@@ -38,9 +41,10 @@ var vm = new Vue({
     methods: {
         // 检查username
         check_username(){
+            this.error_name_show = false
             // 正则匹配格式/^ .... $/
             // 匹配文本[a-zA-Z_汉字]
-            let re = /^[a-zA-Z0-9]{5,20}$/
+            let re = /^[a-zA-Z0-9_]{5,20}$/
             // 匹配纯数字
             let re2 = /^[\d]{5,20}$/
             // 匹配空输入
@@ -69,6 +73,7 @@ var vm = new Vue({
                 }
             }
             // 判断用户名是否重复注册
+            
             if(this.error_name_show == false){
                 let url = 'usernames/' + this.username + '/count/'
                 // det(请求地址, 返回的数据类型)
@@ -76,10 +81,15 @@ var vm = new Vue({
                     responseType: 'json'
                 }).then((response) => { // 成功执行
                     if(response.data.count == 1){
-                        this.error_name_message == '用户名已存在, 请直接登陆'
-                        this.error_name_show == true
+                        this.error_name_message = '用户名已被使用'
+                        this.error_name_show = true
+                        setTimeout(() => {
+                            this.error_name_message = ''
+                            this.error_name_show = false
+                        }, 2000)
                     }else{
-                        this.error_name_show == false
+                        
+                        this.error_name_show = false
                     }
                 }).catch(() => { // 失败执行
                     console.log(error.response)
@@ -94,19 +104,30 @@ var vm = new Vue({
             
         },
         check_password1(){
-            let re = /^[0-9a-zA-z@._]{8,20}$/
+            let re = /^.{8,20}$/
             let re2 = /^$/
-            
+            let re3 = /[a-zA-Z]+/ // 包含字母
+            let re4 = /[\d]+/ // 包含数字
             if (re2.test(this.password1)){
                 this.error_password1_show = false
                 this.isnull_password1 = true
             }else{
-                if (re.test(this.password1)){
-                    this.error_password1_show = false
-                    this.isnull_password1 = false
-                }else{
+                if (re.test(this.password1)){ // 符合正则
+                    if(!(re3.test(this.password1) && re4.test(this.password1))){ // 密码强度不符合
+                        this.error_password1_message = '密码强度过低!至少包含字母和数字组合'
+                        this.error_password1_show = true
+                    }
+                    
+                }else{ // 不符合正则
+                    this.error_password1_message = '请输入8-20位的密码'
                     this.error_password1_show = true
+                    
                 }
+                
+            
+                
+            
+                
             }
             
         },
@@ -125,9 +146,21 @@ var vm = new Vue({
                 this.error_phone_show = false
                 this.isnull_phone = true
             }else{
-                if (re.test(this.phone_num)){
+                if (re.test(this.phone_num)){ // 格式正确
                     this.error_phone_show = false
                     this.isnull_phone = false
+                    let url = "mobiles/" + this.phone_num + "/count/"
+                    axios.get(url, {
+                        responseType: 'json'
+                    }).then((response) => {
+                        if(response.data.count == 1){
+                            this.error_phone_message = "该手机号已注册, 请登录"
+                            this.error_phone_show = true
+                        }
+                    }).catch((response) => {
+                        console.log(response.data.errmes)
+                    })
+
                 }else{
                     this.error_phone_message = '手机号码格式错误'
                     this.error_phone_show = true
@@ -148,7 +181,6 @@ var vm = new Vue({
             }else{
                 this.error_allow_message = '请勾选用户协议'
                 this.error_allow_show = true
-                window.event.returnValue = false;
                 return false
             }
 
@@ -164,18 +196,17 @@ var vm = new Vue({
             this.check_password1();
             this.check_password2();
 			this.check_phone_num();
-			// 先检查allow是否同意
-            if(this.check_allow()){ // 再检查参数填写完整性
+            if(this.check_allow()){// 先判断协议是否同意
                 // 填入空值禁用提交
                 if(this.username == '' || this.password1 == '' || this.password2 == '' || this.phone_num == ''){
-                    this.error_allow_message = '注册信息未填写完整!'
-                    this.error_allow_show = true
+                    this.error_register = '注册信息未正确填写!'
+                    this.error_register_show = true
 
                     // 定时器实现'注册信息未填写完整!'延迟3秒自动消失
                     // setTieout在vue内使用要用箭头函数重新指向vue对象, 默认是window对象
                     setTimeout(()=>{
-                        this.error_allow_message = ''
-                        this.error_allow_show = false
+                        this.error_register = ''
+                        this.error_register_show = false
                     },3000) 
                     window.event.returnValue = false;
                     
@@ -184,7 +215,6 @@ var vm = new Vue({
             }
 
             
-
 			if(this.error_name_show == true || this.error_password1_show == true || this.error_password2_show == true
 				|| this.error_phone_show == true || this.error_allow_show == true) {
                 // 禁用表单的提交

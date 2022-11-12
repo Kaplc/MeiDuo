@@ -23,11 +23,30 @@ class UsernameCountView(View):
         """
         # 获取数据库相同username的数量并返回
         count = User.objects.filter(username=username).count()
-        return http.JsonResponse({
-            'code': RETCODE,
-            'errmsg': 'OK',
-            'count': count
-        })
+        response = {
+            "code": "%s" % RETCODE,
+            "errmsg": "OK",
+            "count": "%s" % count
+        }
+        return http.JsonResponse(response)
+
+
+class PhoneCountView(View):
+    """判断手机号重复注册"""
+
+    def get(self, request, mobile):
+        """
+        :param mobile: 检测手机号
+        :param request: 请求头
+        :return: json
+        """
+        count = User.objects.filter(mobile=mobile).count()
+        response = {
+            "code": "%s" % RETCODE,
+            "errmsg": "OK",
+            "count": "%s" % count,
+        }
+        return http.JsonResponse(response)
 
 
 class RegisterView(View):
@@ -56,6 +75,8 @@ class RegisterView(View):
         # 判断密码是否是8-20个数字
         if not re.match(r'^[0-9a-zA-z@._]{8,20}', password):
             return http.HttpResponseForbidden('密码格式错误')
+        if not (re.match(r'[a-zA-Z]+', password) and re.match(r'[\d]+', password)):
+            return http.HttpResponseForbidden('密码强度不符合')
         # 判断两次密码是否一致
         if not (password == password2):
             return http.HttpResponseForbidden('密码不一致')
