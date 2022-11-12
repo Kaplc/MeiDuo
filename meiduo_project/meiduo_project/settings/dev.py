@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # 使用追加的BASE_DIR注册user子应用
     'users',
     'contents',
+    'verifications',
 ]
 
 
@@ -172,6 +173,14 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # 采用10号库
         "LOCATION": "redis://127.0.0.1:6379/10",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verify_code": {  # verify_code
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 采用11号库
+        "LOCATION": "redis://127.0.0.1:6379/11",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

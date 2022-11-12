@@ -24,7 +24,7 @@ class UsernameCountView(View):
         # 获取数据库相同username的数量并返回
         count = User.objects.filter(username=username).count()
         response = {
-            "code": "%s" % RETCODE,
+            "code": "%s" % RETCODE.OK,
             "errmsg": "OK",
             "count": "%s" % count
         }
@@ -42,7 +42,7 @@ class PhoneCountView(View):
         """
         count = User.objects.filter(mobile=mobile).count()
         response = {
-            "code": "%s" % RETCODE,
+            "code": "%s" % RETCODE.OK,
             "errmsg": "OK",
             "count": "%s" % count,
         }
@@ -73,9 +73,9 @@ class RegisterView(View):
         elif not re.match(r'^[a-zA-Z0-9]{5,20}$', username):
             return http.HttpResponseForbidden('用户名格式错误')
         # 判断密码是否是8-20个数字
-        if not re.match(r'^[0-9a-zA-z@._]{8,20}', password):
+        if not re.match(r'^.{8,20}$', password):
             return http.HttpResponseForbidden('密码格式错误')
-        if not (re.match(r'[a-zA-Z]+', password) and re.match(r'[\d]+', password)):
+        if not (re.match(r'.*[a-zA-Z]+.*', password) and re.match(r'.*[0-9]+.*', password)):
             return http.HttpResponseForbidden('密码强度不符合')
         # 判断两次密码是否一致
         if not (password == password2):
@@ -85,6 +85,7 @@ class RegisterView(View):
             return http.HttpResponseForbidden('手机号格式错误')
         # 判断是否勾选用户协议
         if allow != 'on':
+            # return render(request, 'register.html', {'register_errmsg': '注册失败,请重试!'})
             return http.HttpResponseForbidden('用户协议未同意')
 
         # ----保存注册数据-----

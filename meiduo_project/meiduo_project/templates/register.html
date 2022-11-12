@@ -7,7 +7,9 @@
 	<link rel="stylesheet" type="text/css" href="../static/css/main.css">
 	<script type="text/javascript" src="{{ static('js/vue-2.5.16.js') }}"></script>
 	<script type="text/javascript" src="{{ static('js/axios-0.18.0.min.js') }}"></script>
-	
+	<script type="text/javascript" src="{{ static('js/common.js') }}"></script>
+	<script src="http://app.cloopen.com/im50/ytx-web-im-min-new-5.4.0.js"></script>
+	<script src="https://app.cloopen.com/im50/ytx-web-im-min-new-5.4.0.js"></script>
 </head>
 <body>
 		<div class="register_con">
@@ -49,14 +51,14 @@
 									</li>
 									<li>
 										<label>图形验证码:</label>
-										<input type="text" name="image_code" id="pic_code" class="msg_input" v-model="pic_verification_code" @blur="check_pic_verification_code" >
-										<img src="../static/images/pic_code.jpg" alt="图形验证码" class="pic_code">
-										<span class="error_tip" v-show="error_pic_code_show">请填写图形验证码</span>
+										<input type="text" name="image_code" id="pic_code" class="msg_input" v-model="img_code" @blur="check_image_code" >
+										<img @click="generate_image_code" v-bind:src="image_code_url" alt="图形验证码" class="pic_code">
+										<span class="error_tip" v-show="error_image_code_show">[[error_image_code_message]]</span>
 									</li>
 									<li>
 										<label>短信验证码:</label>
-										<input type="text" name="sms_code" id="msg_code" class="msg_input" v-model="message_code" @blur="check_message_code" >
-										<a href="javascript:;" class="get_msg_code">获取短信验证码</a>
+										<input @blur="check_message_code" type="text" name="sms_code" id="msg_code" class="msg_input" v-model="message_code" @blur="check_message_code" >
+										<a @click="send_message_code" href="javascript:;" class="get_msg_code">[[message_code_tip]]</a>
 										<span class="error_tip" v-show="error_message_code_show">请填写短信验证码</span>
 									</li>
 									<li class="agreement">
@@ -65,15 +67,17 @@
 										<label>同意”美多商城用户使用协议“</label>
 										<span class="error_tip" v-show="error_allow_show" >[[error_allow_message]]</span>
 										<span class="error_tip" v-show="error_register_show" >[[error_register]]</span>
-										{% if register_errmsg %}
-										<span style="color: red;">{{ register_errmsg }}</span>
-										{% endif %}
+										
 									</li>
 									<!-- 后端渲染 -->
                                     
 									<li class="reg_sub">
 										<input @click="on_submit" type="submit" value="注 册">
 									</li>
+									{% if register_errmsg %}
+										<span style="color: red;">{{ register_errmsg }}</span>
+									{% endif %}
+									
 								</ul>
 							</div>	
 						</form>

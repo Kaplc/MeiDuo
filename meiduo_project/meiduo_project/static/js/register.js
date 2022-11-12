@@ -8,7 +8,7 @@ var vm = new Vue({
         password1: '',
         password2: '',
         phone_num: '',
-        pic_verification_code: '',
+        img_code: '',
         message_code: '',
         allow: false,
 
@@ -17,7 +17,7 @@ var vm = new Vue({
         error_password1_show: false,
         error_password2_show: false,
         error_phone_show: false,
-        error_pic_code_show: false,
+        error_image_code_show: false,
         error_message_code_show: false,
         error_allow_show: false,
         error_register_show: false,
@@ -27,9 +27,20 @@ var vm = new Vue({
         error_name_message: '',
         error_password1_message: '',
         error_phone_message: '',
+        error_image_code_message: '',
         register_errmsg: '',
         error_allow_message: '',
         error_register: '',
+
+        // uuid
+        uuid: null,
+        image_code_url: null,
+
+        // 提示信息
+        message_code_tip: '获取短信验证码',
+
+        // 信号
+        sending_flag: true,
         
 
 
@@ -95,24 +106,20 @@ var vm = new Vue({
                     console.log(error.response)
                 })
             }
-
-                        
-
-            
-            
-            
-            
+ 
         },
+        // 校验密码
         check_password1(){
             let re = /^.{8,20}$/
             let re2 = /^$/
-            let re3 = /[a-zA-Z]+/ // 包含字母
-            let re4 = /[\d]+/ // 包含数字
+            let re3 = /.*[a-zA-Z]+.*/ // 包含字母
+            let re4 = /.*\d+.*/ // 包含数字
             if (re2.test(this.password1)){
                 this.error_password1_show = false
                 this.isnull_password1 = true
             }else{
                 if (re.test(this.password1)){ // 符合正则
+                    this.error_password1_show = false
                     if(!(re3.test(this.password1) && re4.test(this.password1))){ // 密码强度不符合
                         this.error_password1_message = '密码强度过低!至少包含字母和数字组合'
                         this.error_password1_show = true
@@ -131,6 +138,7 @@ var vm = new Vue({
             }
             
         },
+        // 再次确认密码
         check_password2(){
                 if (this.password1 != this.password2){
                     this.error_password2_show = true
@@ -139,6 +147,7 @@ var vm = new Vue({
                 }
             
         },
+        // 校验手机号
         check_phone_num(){
             let re = /^1[3-9]\d{9}$/
             let re2 = /^$/
@@ -168,12 +177,44 @@ var vm = new Vue({
             }
 
         },
-        check_pic_verification_code(){
+        // 校验图形验证码
+        check_image_code(){
+            if(this.img_code == ''){
+                this.error_image_code_message = '请填写图形验证码'
+                this.error_image_code_show = true
+            }
+            
+        },
+        
+        // 生成图形验证码
+        generate_image_code(){
+            // 调用common.js内的函数生成uuid
+            this.uuid = generateUUID() 
+            // 拼接图形验证码请求地址
+            this.image_code_url = "../verification/get_image_codes/" + this.uuid + "/" 
 
         },
+        // 校验短信验证码
         check_message_code(){
-
+            if(this.message_code == ''){
+                this.error_phone_message = '请输入短信验证码'
+                this.error_message_code_show = true
+            }else{
+                
+            }
         },
+        // 发送短信验证码
+        send_message_code(){
+            // 避免重复点击
+            if(this.sending_flag == false){
+                return
+            }
+            this.sending_flag == true
+
+            // 校验参数
+            
+        },
+        // 校验是否同意协议
         check_allow(){
             if (this.allow){
                 this.error_allow_show = false
@@ -185,11 +226,6 @@ var vm = new Vue({
             }
 
         },
-        // 清空表单
-        reset_form(){
-            
-        },
-
         // 监听表单提交事件
         on_submit(){
             this.check_username();
@@ -226,7 +262,14 @@ var vm = new Vue({
 		},
 
     },
-    
+    // 生命周期事件
+    mounted() {
+        // 刷新图形验证码
+        
+        this.generate_image_code()
+            
+       
+    },
 
 
 })
