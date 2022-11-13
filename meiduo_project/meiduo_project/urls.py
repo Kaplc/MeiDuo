@@ -20,7 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^', include('contents.urls', namespace='contents')),
     re_path(r'^register.html/', include('users.urls', namespace='users')),
-    re_path(r'^verification/', include('verifications.urls', namespace='verifications')),
+    re_path(r'^verify/', include('verifications.urls', namespace='verifications')),
 
 
 

@@ -1,12 +1,10 @@
 import random
 
 from django import http
-
 # Create your views here.
 from django.template.base import logger
 from django.views import View
 from django_redis import get_redis_connection
-
 from .libs.captcha.captcha import captcha
 from settings.response_code import RETCODE
 from settings.code import SETTING_CODE, SETTING_TIME
@@ -16,79 +14,71 @@ from .libs.yuntongxun.CCP_REST_DEMO.SDK.ccp_sms import CCP
 class SMSCodeView(View):
     """发送短信验证码"""
 
-    def get(self, request, mobile):
+    def get(self, request, mobile_cli, image_code, uuid):
         """
+        :param uuid: uuid
+        :param image_code: 图形验证码
+        :param mobile_cli: 注册手机号码
         :param request: 请求对象
-        :param mobile: 注册手机号码
         :return: json
         """
         # 接收参数
-        # 从表单获取imag_code
-        image_code_cli = request.GET.get('image_code')
-        uuid = request.GET.get('uuid')
+        mobile = mobile_cli
+        image_code_cli = image_code
+        uuid_cli = uuid
         # 校验参数
-        if not all([image_code_cli, uuid]):
+        if not all([mobile, image_code_cli, uuid]):
             return http.JsonResponse({"code": RETCODE.NECESSARYPARAMERR, "errmsg": "缺少参数"})
-        # 图形验证码储存到redis
-        # 链接redis
-        conn_redis = get_redis_connection('verify_code')
-        # 提取图形验证码
-        image_code_sever = conn_redis.get('img_%s' % uuid)
-        if image_code_sever is None:
-            # 图形验证码不存在或过期
-            return http.JsonResponse({"code": RETCODE.IMAGECODEERR, "errmsg": "图形验证码过期"})
-        # 删除图形验证码
-        try:
-            conn_redis.delete('img_%s' % uuid)
-        except Exception as e:
-            # 自定义输出日志
-            logger.error(e)
-        # 对比图形验证码
-        # bytes转字符串
-        image_code_sever = image_code_sever.decode()
-        if image_code_sever != image_code_cli:
-            return http.JsonResponse({"code": RETCODE.IMAGECODEERR, "errmsg": "图形验证码错误"})
-        # 生成短信验证码
-        sms_code = '%06d' % random.randint(0, 999999)
-        # 保存短信验证码
-        conn_redis.setex('sms_%s' % mobile, SETTING_TIME.SMS_CODE_REDIS_EXPIRES, sms_code)
-        # 发送短信验证码
-        CCP().send_template_sms(mobile, [sms_code, SETTING_TIME.SMS_CODE_REDIS_EXPIRES], SETTING_CODE.SMS_TEMPLATES)
-        # 响应结果
-        response = {
-            "code": "%s" % RETCODE.OK,
-            "errmsg": "发送成功",
-        }
-
-        return http.JsonResponse(response)
-
-
-class CheckImageCode(View):
-    """校验图形验证码"""
-
-    def det(self, request, image_code_cli, uuid):
-        """
-
-        :param request: 请求对象
-        :param image_code_cli: 客户端填写的图形验证码
-        :param uuid: uuid
-        :return: json
-        """
-        # 校验参数
-        if not all([image_code_cli, uuid]):
-            return http.JsonResponse({"code": RETCODE.NECESSARYPARAMERR, "errmsg": "缺少参数"})
-
         # 获取图形验证码
         redis_conn = get_redis_connection('verify_code')
         image_code_server = redis_conn.get('img_%s' % uuid)
-
+        if image_code_server is None:
+            # 图形验证码不存在或过期
+            return http.JsonResponse({"code": RETCODE.IMAGECODEERR, "errmsg": "图形验证码过期"})
+        # bytes转字符串解码
+        image_code_server = image_code_server.decode()
         # 对比图形验证码
-        if not (image_code_server == image_code_cli):
+        if not (image_code_server.lower() == image_code_cli.lower()):
             return http.JsonResponse({
                 "code": RETCODE.IMAGECODEERR,
                 "errmsg": "图形验证码错误"
             })
+        # 删除图形验证码
+        try:
+            redis_conn.delete('img_%s' % uuid)
+        except Exception as e:
+            # 自定义输出日志
+            logger.error(e)
+        # 判断发送倒计时是否结束
+        send_flag = redis_conn.get('sms_send_flag_%s' % mobile)
+        if not (send_flag is None):  # 频繁发送
+            return http.JsonResponse({
+                "code": RETCODE.THROTTLINGERR,
+                "errmsg": "请求过于频繁"
+            })
+        # 生成短信验证码
+        sms_code = '%06d' % random.randint(0, 999999)
+        # 建立redis通道
+        pl = redis_conn.pipeline()
 
+        pl.setex('sms_%s' % mobile, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_REDIS, sms_code)  # 保存短信验证码
+        pl.setex('sms_send_flag_%s' % mobile, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_FLAG,
+                 SETTING_CODE.SMS_FLAG_SEND)  # 保存已经发送的标识
+        # 执行通道
+        pl.execute()
+
+        # 发送短信验证码
+        CCP().send_template_sms(mobile, [sms_code, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_YUNTONGXUN],
+                                SETTING_CODE.SMS_TEMPLATES)
+
+        # 响应结果
+        response = {
+            "code": "%s" % RETCODE.OK,
+            "errmsg": "发送成功%s" % sms_code,
+
+        }
+
+        return http.JsonResponse(response)
 
 
 class ImageCode(View):

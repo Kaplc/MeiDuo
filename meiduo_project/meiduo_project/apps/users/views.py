@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django import http
+from django_redis import get_redis_connection
+
 from meiduo_project.settings.response_code import *
 import re
 
@@ -61,6 +63,7 @@ class RegisterView(View):
         password = request.POST.get('password')
         password2 = request.POST.get('password2')
         mobile = request.POST.get('mobile')
+        message_code_cli = request.POST.get('sms_code')
         allow = request.POST.get('allow')
 
         # --校验参数--
@@ -83,6 +86,15 @@ class RegisterView(View):
         # 判断手机号是否合法
         if not re.match(r'^1[3-9]\d{9}$', mobile):
             return http.HttpResponseForbidden('手机号格式错误')
+        # 判断手机验证码
+        redis_conn = get_redis_connection('verify_code')
+        sms_code_server = redis_conn.get('sms_%s' % mobile)
+        if sms_code_server is None:
+            # 手机验证码过期
+            return render(request, 'register.html', {'register_errmsg': '短信验证码错误'})
+        sms_code_server = sms_code_server.decode()
+        if not(sms_code_server == message_code_cli):
+            return render(request, 'register.html', {'register_errmsg': '短信验证码错误'})
         # 判断是否勾选用户协议
         if allow != 'on':
             # return render(request, 'register.html', {'register_errmsg': '注册失败,请重试!'})

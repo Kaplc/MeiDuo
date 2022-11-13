@@ -28,6 +28,7 @@ var vm = new Vue({
         error_password1_message: '',
         error_phone_message: '',
         error_image_code_message: '',
+        error_message_code_tip: '',
         register_errmsg: '',
         error_allow_message: '',
         error_register: '',
@@ -50,8 +51,9 @@ var vm = new Vue({
 
     // 事件
     methods: {
-        // 检查username
-        check_username(){
+        // 检查username规则
+        check_username_rule(){
+            // 重置错误提示
             this.error_name_show = false
             // 正则匹配格式/^ .... $/
             // 匹配文本[a-zA-Z_汉字]
@@ -73,8 +75,7 @@ var vm = new Vue({
                 if(re2.test(this.username)){
                     this.error_name_message = '用户名不能全为数字!'
                     this.error_name_show = true
-                }
-                
+                }  
             }
             // 判断是否符合正则表达式
             if(this.error_name_show == false){
@@ -83,8 +84,16 @@ var vm = new Vue({
                     this.error_name_show = true
                 }
             }
+            // 符合正则
+            if(this.error_name_show == false){
+                // 检查用户名重复
+                this.check_username_isright()
+            }
+ 
+        },
+        // 校验是否username重复
+        check_username_isright(){
             // 判断用户名是否重复注册
-            
             if(this.error_name_show == false){
                 let url = 'usernames/' + this.username + '/count/'
                 // det(请求地址, 返回的数据类型)
@@ -106,17 +115,19 @@ var vm = new Vue({
                     console.log(error.response)
                 })
             }
- 
         },
         // 校验密码
         check_password1(){
+            // 重置
+            this.error_password1_message = ''
+            this.error_password1_show = false
+
             let re = /^.{8,20}$/
             let re2 = /^$/
             let re3 = /.*[a-zA-Z]+.*/ // 包含字母
             let re4 = /.*\d+.*/ // 包含数字
             if (re2.test(this.password1)){
                 this.error_password1_show = false
-                this.isnull_password1 = true
             }else{
                 if (re.test(this.password1)){ // 符合正则
                     this.error_password1_show = false
@@ -130,11 +141,6 @@ var vm = new Vue({
                     this.error_password1_show = true
                     
                 }
-                
-            
-                
-            
-                
             }
             
         },
@@ -147,73 +153,112 @@ var vm = new Vue({
                 }
             
         },
-        // 校验手机号
         check_phone_num(){
-            let re = /^1[3-9]\d{9}$/
-            let re2 = /^$/
-            if (re2.test(this.phone_num)){
-                this.error_phone_show = false
-                this.isnull_phone = true
-            }else{
-                if (re.test(this.phone_num)){ // 格式正确
-                    this.error_phone_show = false
-                    this.isnull_phone = false
-                    let url = "mobiles/" + this.phone_num + "/count/"
-                    axios.get(url, {
-                        responseType: 'json'
-                    }).then((response) => {
-                        if(response.data.count == 1){
-                            this.error_phone_message = "该手机号已注册, 请登录"
-                            this.error_phone_show = true
-                        }
-                    }).catch((response) => {
-                        console.log(response.data.errmes)
-                    })
-
-                }else{
-                    this.error_phone_message = '手机号码格式错误'
-                    this.error_phone_show = true
-                }
-            }
 
         },
-        // 校验图形验证码
-        check_image_code(){
-            if(this.img_code == ''){
-                this.error_image_code_message = '请填写图形验证码'
-                this.error_image_code_show = true
-            }
-            
-        },
-        
         // 生成图形验证码
         generate_image_code(){
             // 调用common.js内的函数生成uuid
             this.uuid = generateUUID() 
             // 拼接图形验证码请求地址
-            this.image_code_url = "../verification/get_image_codes/" + this.uuid + "/" 
+            this.image_code_url = "../verify/get_image_codes/" + this.uuid + "/" 
 
-        },
-        // 校验短信验证码
-        check_message_code(){
-            if(this.message_code == ''){
-                this.error_phone_message = '请输入短信验证码'
-                this.error_message_code_show = true
-            }else{
-                
-            }
         },
         // 发送短信验证码
         send_message_code(){
-            // 避免重复点击
-            if(this.sending_flag == false){
-                return
+            // 校验手机号格式
+            let re = /^1[3-9]\d{9}$/
+            let re2 = /^$/
+            // 重置错误提示
+            this.error_phone_show = false
+            // 校验是否填写
+            if (re2.test(this.phone_num)){
+                this.error_phone_message = '请填写手机号'
+                this.error_phone_show = true
             }
-            this.sending_flag == true
+            // 校验手机号格式
+            if(this.error_phone_show == false){
+                if (!re.test(this.phone_num)){ // 格式错误
+                    this.error_phone_message = '手机号码格式错误'
+                    this.error_phone_show = true
+                }    
+            }
+            // -------------------------------------------------
+            // 校验手机号是否重复
+            if(this.error_phone_show == false){
+                let url = "mobiles/" + this.phone_num + "/count/"
+                    axios.get(url, {
+                        responseType: 'json'
+                    }).then((response) => { 
+                        if(response.data.count == 1){ // 手机号重复
+                            this.error_phone_message = "该手机号已注册, 请登录"
+                            this.error_phone_show = true
 
-            // 校验参数
-            
+                        }else{ // 手机号未注册
+
+                            // ---------------------------------------
+                            // 校验图片验证码是否填写
+                            this.error_image_code_show = false // 重置错误参数
+                            if(this.img_code == ''){
+                                this.error_image_code_message = '请填写图形验证码'
+                                this.error_image_code_show = true
+                            }
+
+                            // 校验图形验证码正确性和发送短信
+                            if(this.error_image_code_show == false){
+                                // 拼接验证图形验证码,发送短信验证码请求地址
+                                let url = "../verify/send_message_code/" + this.phone_num + "/" + this.img_code + "/" + this.uuid + "/"
+                                
+                                // 阻止重复点击
+                                if(this.sending_flag == false){
+                                    this.error_message_code_tip = '请求过于频繁'
+                                    return
+                                }
+
+                                axios.get(url, {
+                                    responseType: 'json'
+                                }).then((response) => { // 请求成功
+                                    if(response.data.code == "0"){
+                                        // 验证成功发送短信验证码
+                                        // alert('短信验证码发送成功')
+                                        this.sending_flag = false
+
+                                        // 渲染倒计时60秒
+                                        let time = 60
+                                        cound_down = setInterval(() => {
+                                            this.message_code_tip = '重新发送' + time + "秒"
+                                            time -= 1
+                                            if(time <= -1){
+                                                this.message_code_tip = '获取短信验证码'
+                                                this.sending_flag = true
+                                                clearInterval(cound_down)
+                                            }
+                                        }, 1000)
+                                        
+                                    }else{
+                                        // 刷新验证码, 显示错误
+                                        this.generate_image_code()
+                                        this.error_image_code_message = '图形验证码错误'
+                                        this.error_image_code_show = true
+                                        
+                                    }
+                                }).catch((response) => {
+                                    // 刷新验证码, 显示错误
+                                    this.generate_image_code()
+                                    this.error_image_code_message = '图形验证码错误'
+                                    this.error_image_code_show = true
+                                    console.log(response)
+                                })
+                            }
+                            
+                        }
+                    }).catch((response) => {
+                        console.log(response)
+                    })
+            }          
+
         },
+
         // 校验是否同意协议
         check_allow(){
             if (this.allow){
@@ -228,13 +273,13 @@ var vm = new Vue({
         },
         // 监听表单提交事件
         on_submit(){
-            this.check_username();
+            this.check_username_rule();
             this.check_password1();
             this.check_password2();
 			this.check_phone_num();
             if(this.check_allow()){// 先判断协议是否同意
                 // 填入空值禁用提交
-                if(this.username == '' || this.password1 == '' || this.password2 == '' || this.phone_num == ''){
+                if(this.username == '' || this.password1 == '' || this.password2 == '' || this.phone_num == '' || this.img_code == '' || this.message_code == ''){
                     this.error_register = '注册信息未正确填写!'
                     this.error_register_show = true
 
