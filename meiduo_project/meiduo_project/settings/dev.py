@@ -19,6 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 追加BASE_DIR路径
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -181,6 +182,14 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # 采用11号库
         "LOCATION": "redis://127.0.0.1:6379/11",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "celery": {  # celery
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 采用12号库
+        "LOCATION": "redis://127.0.0.1:6379/12",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

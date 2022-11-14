@@ -5,10 +5,11 @@ from django import http
 from django.template.base import logger
 from django.views import View
 from django_redis import get_redis_connection
+
+from celery_tasks.sms.tasks import celery_send_message_code
 from .libs.captcha.captcha import captcha
 from settings.response_code import RETCODE
 from settings.code import SETTING_CODE, SETTING_TIME
-from .libs.yuntongxun.CCP_REST_DEMO.SDK.ccp_sms import CCP
 
 
 class SMSCodeView(View):
@@ -16,6 +17,7 @@ class SMSCodeView(View):
 
     def get(self, request, mobile_cli, image_code, uuid):
         """
+        接收get请求
         :param uuid: uuid
         :param image_code: 图形验证码
         :param mobile_cli: 注册手机号码
@@ -68,8 +70,10 @@ class SMSCodeView(View):
         pl.execute()
 
         # 发送短信验证码
-        CCP().send_template_sms(mobile, [sms_code, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_YUNTONGXUN],
-                                SETTING_CODE.SMS_TEMPLATES)
+        # CCP().send_template_sms(mobile, [sms_code, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_YUNTONGXUN],
+        #                         SETTING_CODE.SMS_TEMPLATES)
+        # 调用celery异步发送短信验证码
+        celery_send_message_code(mobile, sms_code)
 
         # 响应结果
         response = {
@@ -86,7 +90,7 @@ class ImageCode(View):
 
     def get(self, request, uuid):
         """
-
+        接收get
         :param uuid: 用户和验证码图片绑定唯一标识
         :param request:
         :return: image/jpg
