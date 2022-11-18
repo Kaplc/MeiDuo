@@ -1,17 +1,88 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate, logout
 from django.db import DatabaseError
 from django.shortcuts import render, redirect
-
-# Create your views here.
 from django.urls import reverse
 from django.views import View
 from django import http
 from django_redis import get_redis_connection
-
-from meiduo_project.settings.response_code import *
 import re
-
+from utils.parameter import SETTING_TIME
+from utils.response_code import RETCODE
 from .models import User
+
+
+# Create your views here.
+
+class LogoutView(View):
+    """用户退出登录"""
+    def get(self, request):
+        """
+        实现退出登录
+        :param request: 请求对象
+        :return: 重定向到首页
+        """
+        # 清理session并登出
+        logout(request)
+        # 重定向到首页
+        response = redirect(reverse('contents:index'))
+        # 删除cookie的username信息
+        response.delete_cookie('username')
+        return response
+
+
+class LoginView(View):
+    """用户登录"""
+
+    def get(self, request):
+        """
+        提供登录页面
+        :param request: 请求对象
+        :return: 登录页面
+        """
+        return render(request, 'login.html')
+
+    def post(self, request):
+        # 接收参数
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        remembered = request.POST.get('remembered')
+        # 校验参数
+        if not (all([username, password])):  # 判断参数完整
+            return http.HttpResponseForbidden('参数错误')
+        # 校验用户名
+
+        if not re.match(r'^[a-zA-Z0-9]{5,20}$', username):
+            return render(request, 'login.html', {'account_errmsg': '用户名或密码错误, 请重试'})
+            # return http.HttpResponseForbidden('用户名或密码格式错误')
+        # 校验密码
+        if not re.match(r'^.{8,20}$', password):
+            return render(request, 'login.html', {'account_errmsg': '用户名或密码错误, 请重试'})
+            # return http.HttpResponseForbidden('用户名或密码格式错误')
+        if not (re.match(r'.*[a-zA-Z]+.*', password) and re.match(r'.*[0-9]+.*', password)):
+            return render(request, 'login.html', {'account_errmsg': '用户名或密码错误, 请重试'})
+            # return http.HttpResponseForbidden('用户名或密码格式错误')
+        # 认证登录用户
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return render(request, 'login.html', {'account_errmsg': '用户名或密码错误, 请重试'})
+        # 状态保持
+        login(request, user)
+        # 响应结果
+        response = redirect(reverse('contents:index'))
+        # 设置保持时间
+        if remembered == 'on':
+            # 选择记住登录保存3天
+            request.session.set_expiry(None)
+            # 注册登录时把用户名写入cookie
+            response.set_cookie('username', user.username, max_age=SETTING_TIME.COOKIE_USERNAME_EXPIRES)
+        else:
+            # 不选择浏览器关闭就退出登录
+            request.session.set_expiry(0)
+            # 注册登录时把用户名写入cookie
+            response.set_cookie('username', user.username, max_age=3600 * 12)
+            pass
+
+        return response
 
 
 class UsernameCountView(View):
@@ -93,7 +164,7 @@ class RegisterView(View):
             # 手机验证码过期
             return render(request, 'register.html', {'register_errmsg': '短信验证码错误'})
         sms_code_server = sms_code_server.decode()
-        if not(sms_code_server == message_code_cli):
+        if not (sms_code_server == message_code_cli):
             return render(request, 'register.html', {'register_errmsg': '短信验证码错误'})
         # 判断是否勾选用户协议
         if allow != 'on':
@@ -111,4 +182,7 @@ class RegisterView(View):
         # login(请求, 存入数据库对象)
         login(request, user)
         # 响应注册结果: 重定向到首页
-        return redirect(reverse('contents:index'))
+        response = redirect(reverse('contents:index'))
+        # 注册登录时把用户名写入cookie
+        response.set_cookie('username', user.username, max_age=3600 * 12)
+        return response

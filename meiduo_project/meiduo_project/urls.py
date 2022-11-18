@@ -17,10 +17,14 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 
 urlpatterns = [
+    # 管理员
     path('admin/', admin.site.urls),
+    # 首页
     re_path(r'^', include('contents.urls', namespace='contents')),
-    re_path(r'^register.html/', include('users.urls', namespace='users')),
-    re_path(r'^verify/', include('verifications.urls', namespace='verifications')),
+    # 用户(登录, 登出, 注册)
+    re_path(r'^', include('users.urls', namespace='users')),
+    # 验证
+    re_path(r'^', include('verifications.urls', namespace='verifications')),
 
 
 

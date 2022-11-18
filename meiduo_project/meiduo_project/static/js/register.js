@@ -95,7 +95,7 @@ var vm = new Vue({
         check_username_isright(){
             // 判断用户名是否重复注册
             if(this.error_name_show == false){
-                let url = 'usernames/' + this.username + '/count/'
+                let url = '../usernames/' + this.username + '/count/'
                 // det(请求地址, 返回的数据类型)
                 axios.get(url,{
                     responseType: 'json'
@@ -186,7 +186,7 @@ var vm = new Vue({
             // -------------------------------------------------
             // 校验手机号是否重复
             if(this.error_phone_show == false){
-                let url = "mobiles/" + this.phone_num + "/count/"
+                let url = "../mobiles/" + this.phone_num + "/count/"
                     axios.get(url, {
                         responseType: 'json'
                     }).then((response) => { 

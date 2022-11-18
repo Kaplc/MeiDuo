@@ -23,9 +23,6 @@ class RETCODE:
     STOCKERR = "5007"
 
 
-
-
-
 err_msg = {
     RETCODE.OK: u"成功",
     RETCODE.IMAGECODEERR: u"图形验证码错误",

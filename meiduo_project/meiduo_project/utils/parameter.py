@@ -4,6 +4,7 @@ class SETTING_TIME:
     SMS_CODE_REDIS_EXPIRES_YUNTONGXUN = 5  # 云通信短信验证码过期时间(分钟)
     SMS_CODE_REDIS_EXPIRES_REDIS = 300  # redis短信验证码保存时间
     SMS_CODE_REDIS_EXPIRES_FLAG = 60  # redis保存send_flag的时间
+    COOKIE_USERNAME_EXPIRES = 3600 * 24 * 3  # username的cookie过期时间
 
 
 class SETTING_CODE:
