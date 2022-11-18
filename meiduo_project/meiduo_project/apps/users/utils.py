@@ -33,8 +33,7 @@ class UsernameMobileAuthBacken(ModelBackend):
         :return:
         """
         user = get_user_by_account(username)
-        if user is None:
-            return None
-        else:
-            user.check_password(password)
+        if user and user.check_password(password):
             return user
+        else:
+            return None
