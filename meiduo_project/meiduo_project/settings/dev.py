@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure--_1f%o0k*2&z)$!r*yz*k_rf_5!i&q-o*03$s&0we0%h6ugls7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'pdd42.bolinkang.cn']
+ALLOWED_HOSTS = ['127.0.0.1', 'pdd42.bolinkang.cn', 'localhost', 'www.meiduo.site']
 
 # Application definition
 
@@ -268,3 +268,7 @@ AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBacken']
 # --------------------------定义LoginRequiredMixin重定向地址--------------------------- #
 LOGIN_URL = '/login.html/'
 
+# --------------------------QQ开发者应用配置--------------------------- #
+QQ_CLIENT_ID = '101474184'
+QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
+QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'

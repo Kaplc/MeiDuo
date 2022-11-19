@@ -29,7 +29,7 @@ let vm = new Vue({
 		// 生成图形验证码
 		generate_image_code(){
 			this.uuid = generateUUID();
-			this.image_code_url = "/image_codes/" + this.uuid + "/";
+			this.image_code_url = "../verify/get_image_codes/" + this.uuid + "/";
 		},
 		// 检查手机号
 		check_mobile(){

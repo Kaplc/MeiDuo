@@ -89,7 +89,6 @@ class LoginView(View):
             # 没有next重定向到首页
             response = redirect(reverse('contents:index'))
 
-
         # 设置保持时间
         if remembered == 'on':
             # 选择记住登录保存3天
@@ -99,7 +98,7 @@ class LoginView(View):
         else:
             # 不选择浏览器关闭就退出登录
             request.session.set_expiry(0)
-            # 注册登录时把用户名写入cookie
+            # 注册登录时把用户名写入cookie, 保存12小时
             response.set_cookie('username', user.username, max_age=3600 * 12)
             pass
 
