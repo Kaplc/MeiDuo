@@ -96,7 +96,7 @@ var vm = new Vue({
             // 判断用户名是否重复注册
             if(this.error_name_show == false){
                 let url = '../usernames/' + this.username + '/count/'
-                // det(请求地址, 返回的数据类型)
+                // get(请求地址, 返回的数据类型)
                 axios.get(url,{
                     responseType: 'json'
                 }).then((response) => { // 成功执行

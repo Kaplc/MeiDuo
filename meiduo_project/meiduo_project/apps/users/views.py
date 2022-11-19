@@ -15,6 +15,7 @@ from .models import User
 
 class LogoutView(View):
     """用户退出登录"""
+
     def get(self, request):
         """
         实现退出登录
@@ -83,6 +84,27 @@ class LoginView(View):
             pass
 
         return response
+
+
+class IsRegister(View):
+    """登录时判断是否注册"""
+
+    def get(self, request, username):
+        """
+        判断手机号用户名是否注册过
+        :param username:要验证的用户名或手机号
+        :param request: 请求对象
+        :return: json
+        """
+        username_count = User.objects.filter(username=username).count()
+        mobile_count = User.objects.filter(mobile=username).count()
+        response = {
+            "code": RETCODE.OK,
+            "errmsg": "OK",
+            "username_count": username_count,
+            "mobile_count": mobile_count,
+        }
+        return http.JsonResponse(response)
 
 
 class UsernameCountView(View):

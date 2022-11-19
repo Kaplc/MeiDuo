@@ -25,7 +25,7 @@
 						<form method="post" class="login-form" @submit="on_submit" v-cloak>
                             {{ csrf_input }}
 							<input type="text" v-model="username" @blur="check_username" name="username" class="name_input" placeholder="请输入用户名或手机号">
-							<div v-show="error_username" class="user_error">请输入用户名或手机号</div>
+							<div v-show="error_username" class="user_error">[[error_username_message]]</div>
 							<input type="password" v-model="password" @blur="check_password" name="password" class="pass_input" placeholder="请输入密码">
 							<div v-show="error_password" class="pwd_error">请输入密码</div>
 							<div class="more_input clearfix">

@@ -6,6 +6,10 @@ let vm = new Vue({
         username: '',
         password: '',
 
+        // 错误信息
+        error_username_message: '',
+
+        // v-show
         error_username: false,
         error_password: false,
         remembered: false,
@@ -16,6 +20,21 @@ let vm = new Vue({
             this.error_username = false
             if(this.username == ''){
                 this.error_username = true
+            }
+            // 校验是否注册
+            if(this.error_username == false){
+                let url1 = '../isReg/' + this.username + "/count/"
+                // ---------------校验用户名-----------
+                axios.get(url1,{
+                    responseType: 'json'
+                }).then((response) => { // 成功执行
+                    if(response.data.username_count == 0 && response.data.mobile_count == 0){
+                        this.error_username_message = '该用户未注册, 请先注册!'
+                        this.error_username = true
+                    }
+                }).catch(() => { // 失败执行
+                    console.log(error.response)
+                })
             }
             
         },
