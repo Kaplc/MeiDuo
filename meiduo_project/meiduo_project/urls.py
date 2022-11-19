@@ -17,15 +17,15 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 
 urlpatterns = [
-    # 管理员
+    # admin
     path('admin/', admin.site.urls),
-    # 首页
+    # contents
     re_path(r'^', include('contents.urls', namespace='contents')),
-    # 用户(登录, 登出, 注册)
+    # users
     re_path(r'^', include('users.urls', namespace='users')),
-    # 验证
+    # verifications
     re_path(r'^', include('verifications.urls', namespace='verifications')),
-
-
+    # oauth
+    re_path(r'^', include('oauth.urls', namespace='oauth')),
 
 ]

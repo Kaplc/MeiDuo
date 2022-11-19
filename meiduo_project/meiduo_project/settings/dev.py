@@ -19,7 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 追加BASE_DIR路径
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -41,9 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 使用追加的BASE_DIR注册user子应用
+    # 用户模块
     'users',
+    # 首页模块
     'contents',
+    # 认证模块
     'verifications',
+    # QQ登录模块
+    'oauth',
 ]
 
 
@@ -260,3 +264,7 @@ SESSION_COOKIE_AGE = 259200
 
 # --------------------------指定自定义用户认证后端--------------------------- #
 AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBacken']
+
+# --------------------------定义LoginRequiredMixin重定向地址--------------------------- #
+LOGIN_URL = '/login.html/'
+

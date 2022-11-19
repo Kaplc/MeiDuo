@@ -13,7 +13,9 @@ urlpatterns = [
     # 验证用户名, 手机号是否注册
     re_path(r'isReg/(?P<username>.*)/count/$', IsRegister.as_view()),
     # 登录
-    re_path(r'login.html/$', LoginView.as_view()),
+    re_path(r'login.html/$', LoginView.as_view(), name='login'),
     # 登出
-    re_path(r'logout$', LogoutView.as_view()),
+    re_path(r'logout$', LogoutView.as_view(), name='logout'),
+    # 用户中心
+    re_path(r'user_center_info.html$', UserInfoView.as_view(), name='center_info')
 ]

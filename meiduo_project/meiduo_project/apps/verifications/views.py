@@ -8,8 +8,8 @@ from django_redis import get_redis_connection
 
 from celery_tasks.sms.tasks import celery_send_message_code
 from .libs.captcha.captcha import captcha
-from utils.response_code import RETCODE
-from utils.parameter import SETTING_CODE, SETTING_TIME
+from meiduo_project.utils.response_code import RETCODE
+from meiduo_project.utils.parameter import SETTING_CODE, SETTING_TIME
 
 
 class SMSCodeView(View):

@@ -1,4 +1,5 @@
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import DatabaseError
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -6,12 +7,22 @@ from django.views import View
 from django import http
 from django_redis import get_redis_connection
 import re
-from utils.parameter import SETTING_TIME
-from utils.response_code import RETCODE
+# noinspection PyUnresolvedReferences
+from meiduo_project.utils.parameter import SETTING_TIME
+# noinspection PyUnresolvedReferences
+from meiduo_project.utils.response_code import RETCODE
 from .models import User
 
 
 # Create your views here.
+
+class UserInfoView(LoginRequiredMixin, View):
+    """用户中心"""
+
+    def get(self, request):
+        """通过个人信息页面"""
+        return render(request, 'user_center_info.html')
+
 
 class LogoutView(View):
     """用户退出登录"""
@@ -69,7 +80,16 @@ class LoginView(View):
         # 状态保持
         login(request, user)
         # 响应结果
-        response = redirect(reverse('contents:index'))
+        # 取出next
+        next = request.GET.get('next')
+        if next:
+            # 有next重定向到next的路径
+            response = redirect(next)
+        else:
+            # 没有next重定向到首页
+            response = redirect(reverse('contents:index'))
+
+
         # 设置保持时间
         if remembered == 'on':
             # 选择记住登录保存3天

@@ -1,5 +1,8 @@
 from django.contrib.auth.backends import ModelBackend
 import re
+
+from django.contrib.auth.decorators import login_required
+
 from .models import User
 
 
