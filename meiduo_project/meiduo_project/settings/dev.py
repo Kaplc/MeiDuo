@@ -28,7 +28,13 @@ SECRET_KEY = 'django-insecure--_1f%o0k*2&z)$!r*yz*k_rf_5!i&q-o*03$s&0we0%h6ugls7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'pdd42.bolinkang.cn', 'localhost', 'www.meiduo.site']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'pdd42.bolinkang.cn',
+    'localhost',
+    'www.meiduo.site',
+    '611a78647w.oicp.vip',
+]
 
 # Application definition
 
@@ -49,7 +55,6 @@ INSTALLED_APPS = [
     # QQ登录模块
     'oauth',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

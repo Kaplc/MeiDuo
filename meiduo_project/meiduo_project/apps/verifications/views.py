@@ -73,13 +73,13 @@ class SMSCodeView(View):
         # CCP().send_template_sms(mobile, [sms_code, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_YUNTONGXUN],
         #                         SETTING_CODE.SMS_TEMPLATES)
         # 调用celery异步发送短信验证码
-        celery_send_message_code(mobile, sms_code)
+        # celery_send_message_code(mobile, sms_code)
 
         # 响应结果
         response = {
             "code": "%s" % RETCODE.OK,
-            "errmsg": "发送成功%s" % sms_code,
-
+            "errmsg": "发送成功",
+            "sms_code": sms_code,
         }
 
         return http.JsonResponse(response)
