@@ -17,6 +17,7 @@ def celery_send_message_code(mobile, sms_code):
     """
 
     send_res = ''
+
     try:
         send_res = CCP().send_template_sms(mobile, [sms_code, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_YUNTONGXUN],
                                            SETTING_CODE.SMS_TEMPLATES)

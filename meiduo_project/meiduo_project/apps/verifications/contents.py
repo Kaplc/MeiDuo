@@ -1,0 +1,2 @@
+# token有效期，单位秒
+VERIFY_EMAIL_TOKEN_EXPIRES = 60 * 30

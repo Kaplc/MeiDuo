@@ -222,7 +222,7 @@ var vm = new Vue({
                                     // 验证成功发送短信验证码
                                     // alert('短信验证码发送成功')
                                     this.sending_flag = false
-
+                                    alert('短信验证码:' + response.data.sms_code)
                                     // 渲染倒计时60秒
                                     let time = 60
                                     cound_down = setInterval(() => {

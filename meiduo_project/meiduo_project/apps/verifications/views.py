@@ -5,10 +5,11 @@ from django import http
 from django.template.base import logger
 from django.views import View
 from django_redis import get_redis_connection
-
 from celery_tasks.sms.tasks import celery_send_message_code
 from .libs.captcha.captcha import captcha
+# noinspection PyUnresolvedReferences
 from meiduo_project.utils.response_code import RETCODE
+# noinspection PyUnresolvedReferences
 from meiduo_project.utils.parameter import SETTING_CODE, SETTING_TIME
 
 
@@ -72,8 +73,8 @@ class SMSCodeView(View):
         # 发送短信验证码
         # CCP().send_template_sms(mobile, [sms_code, SETTING_TIME.SMS_CODE_REDIS_EXPIRES_YUNTONGXUN],
         #                         SETTING_CODE.SMS_TEMPLATES)
-        # 调用celery异步发送短信验证码
-        # celery_send_message_code(mobile, sms_code)
+        # 调用celery异步发送短信验证码, 不能忘记delay()
+        celery_send_message_code.delay(mobile, sms_code)
 
         # 响应结果
         response = {

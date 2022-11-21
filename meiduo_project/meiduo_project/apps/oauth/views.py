@@ -10,10 +10,10 @@ from django.conf import settings
 from django_redis import get_redis_connection
 
 from users.models import User
-from utils.response_code import RETCODE
+from meiduo_project.utils.response_code import RETCODE
 from .models import OAuthQQUser
 import logging
-from utils.parameter import SETTING_TIME
+from meiduo_project.utils.parameter import SETTING_TIME
 from .utils import generate_access_token, check_access_token
 
 # 创建日志器对象

@@ -1,9 +1,51 @@
+from django.conf import settings
 from django.contrib.auth.backends import ModelBackend
 import re
-
-from django.contrib.auth.decorators import login_required
-
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from .contents import VERIFY_EMAIL_TOKEN_EXPIRES
 from .models import User
+import logging
+
+logger = logging.getLogger('django')
+
+
+def check_verify_email_token(token):
+    """通过token获取激活对象"""
+    serializer = Serializer(settings.SECRET_KEY, expires_in=VERIFY_EMAIL_TOKEN_EXPIRES)
+    # token可能过期
+    try:
+        data = serializer.loads(token)
+    except Exception as e:
+        logger.error(e)
+        return None
+    else:
+        email = data['email']
+        user_id = data['user_id']
+
+        try:
+            user = User.objects.get(email=email, id=user_id)
+        except Exception as e:
+            logger.error(e)
+            return None
+        else:
+            return user
+
+
+def generate_verify_email_url(user):
+    """
+    生成邮箱链接
+    :param user: 当前登录用户对象
+    :return: verify_url
+    """
+    serializer = Serializer(settings.SECRET_KEY, expires_in=VERIFY_EMAIL_TOKEN_EXPIRES)
+    data = {
+        'user_id': user.id,
+        'email': user.email
+    }
+    token = serializer.dumps(data).decode()
+    # 拼接激活链接
+    verify_url = settings.EMAIL_VERIFY_URL + '?token=' + token
+    return verify_url
 
 
 def get_user_by_account(account):
@@ -17,7 +59,8 @@ def get_user_by_account(account):
             user = User.objects.get(mobile=account)
         else:
             user = User.objects.get(username=account)
-    except Exception:
+    except Exception as e:
+        logger.error(e)
         return None
     else:
         return user

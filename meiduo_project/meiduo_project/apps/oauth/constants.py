@@ -1,2 +1,3 @@
 # access_token有效期，单位秒
 ACCESS_TOKEN_EXPIRES = 600
+VERIFY_EMAIL_TOKEN_EXPIRES = 60 * 30

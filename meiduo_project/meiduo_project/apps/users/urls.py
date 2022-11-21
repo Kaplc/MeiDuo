@@ -17,5 +17,9 @@ urlpatterns = [
     # 登出
     re_path(r'logout$', LogoutView.as_view(), name='logout'),
     # 用户中心
-    re_path(r'user_center_info.html$', UserInfoView.as_view(), name='center_info')
+    re_path(r'user_center_info.html$', UserInfoView.as_view(), name='center_info'),
+    # 添加邮箱
+    re_path(r'emails/$', EmailView.as_view()),
+    # 邮箱激活验证
+    re_path(r'emails/verification/$', VerifyEmailView.as_view()),
 ]
