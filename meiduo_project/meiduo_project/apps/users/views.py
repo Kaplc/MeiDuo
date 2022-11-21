@@ -121,6 +121,8 @@ class LoginView(View):
         :param request: 请求对象
         :return: 登录页面
         """
+        if not (request.user.id is None):
+            return redirect(reverse('contents:index'))
         return render(request, 'login.html')
 
     def post(self, request):
