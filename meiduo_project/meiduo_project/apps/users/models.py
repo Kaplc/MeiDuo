@@ -23,7 +23,7 @@ class User(AbstractUser):
 
 
 class Area(models.Model):
-    """省市区"""
+    """省市区表"""
     name = models.CharField(max_length=20, verbose_name='名称')
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, related_name='subs', null=True, blank=True,
                                verbose_name='上级行政区划')
@@ -35,3 +35,4 @@ class Area(models.Model):
 
     def __str__(self):
         return self.name
+
