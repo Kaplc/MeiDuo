@@ -46,14 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 使用追加的BASE_DIR注册user子应用
-    # 用户模块
-    'users',
-    # 首页模块
-    'contents',
-    # 认证模块
-    'verifications',
-    # QQ登录模块
-    'oauth',
+
+    'users',  # 用户模块
+    'contents',  # 首页模块
+    'verifications',  # 认证模块
+    'oauth',  # QQ登录模块
+    'areas',  # 省市区查询模块
 ]
 
 MIDDLEWARE = [

@@ -22,4 +22,6 @@ urlpatterns = [
     re_path(r'emails/$', EmailView.as_view()),
     # 邮箱激活验证
     re_path(r'emails/verification/$', VerifyEmailView.as_view()),
+    # 收货地址
+    re_path(r'user_center_site.html/$', AddressView.as_view(), name='address'),
 ]
