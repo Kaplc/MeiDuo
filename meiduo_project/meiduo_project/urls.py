@@ -28,6 +28,6 @@ urlpatterns = [
     # oauth
     re_path(r'^', include('oauth.urls', namespace='oauth')),
     # areas
-    # re_path(r'^', include('areas.urls'))
+    re_path(r'^', include('areas.urls', namespace='areas')),
 
 ]
