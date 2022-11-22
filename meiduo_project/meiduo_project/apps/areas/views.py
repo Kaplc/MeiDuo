@@ -37,6 +37,33 @@ class Areas(View):
             return http.JsonResponse({'code': RETCODE.OK, "errmsg": "OK", 'province_list': province_list})
         else:
             # 查询市区
+            try:
+                parent_model_list = Area.objects.get(id=area_id)
 
-            pass
-        pass
+                # 父级查询子行政区数据
+                children_model_list = parent_model_list.subs.all()
+
+                # 模型列表转列表
+                subs = [
+
+                ]
+                for i in children_model_list:
+                    add_dict = {
+                        'id': i.id,
+                        'name': i.name
+                    }
+                    subs.append(add_dict)
+                # 拼接响应数据
+                response = {
+                    'code': RETCODE.OK,
+                    'errmsg': '查询成功',
+                    'sub_data': {
+                        'id': parent_model_list.id,
+                        'name': parent_model_list.name,
+                        'subs': subs
+                    }
+                }
+                return http.JsonResponse(response)
+            except Exception as e:
+                logger.error(e)
+                return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': "查询失败"})
