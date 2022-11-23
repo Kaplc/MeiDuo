@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from .models import Area
 from django import http
-from utils.response_code import RETCODE
+from meiduo_project.utils.response_code import RETCODE
 import logging
 
 logger = logging.getLogger('django')

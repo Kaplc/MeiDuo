@@ -71,7 +71,7 @@ class EmailView(LoginRequiredMixin, View):
 
         # 更新数据库
         try:
-            if email == request.user.email:
+            if request.user.email_active:
                 return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '该邮箱已验证'})
             request.user.email = email  # 请求对象找到user用户对象控制数据库email字段数据
             request.user.email_active = False
