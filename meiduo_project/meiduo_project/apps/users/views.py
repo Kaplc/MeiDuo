@@ -13,12 +13,84 @@ from celery_tasks.send_email.tasks import send_verify_email
 from meiduo_project.utils.parameter import SETTING_TIME
 # noinspection PyUnresolvedReferences
 from meiduo_project.utils.response_code import RETCODE
-from .models import User
+from .models import User, Address
 from .utils import generate_verify_email_url, check_verify_email_token
 
 # Create your views here.
 logger = logging.getLogger('django')
 
+
+class CreatAddressView(View):
+    """新增收货地址"""
+
+    def post(self, request):
+        """新增收货地址后端逻辑"""
+        # 判断是否添加上限
+        address_count = request.user.addresses.count()
+        if address_count > 20:
+            return http.JsonResponse({'code': RETCODE.ADDRESSERR, 'errmsg': '地址上限'})
+        # 接收参数
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        title = json_dict.get('title')
+        receiver = json_dict.get('receiver')
+        province_id = json_dict.get('province_id')
+        city_id = json_dict.get('city_id')
+        district_id = json_dict.get('district_id')
+        place = json_dict.get('place')
+        mobile = json_dict.get('mobile')
+        tel = json_dict.get('tel')
+        email = json_dict.get('email')
+        # 校验参数
+        if not all([receiver, province_id, city_id, district_id, place, mobile]):
+            return http.JsonResponse({'code': RETCODE.NECESSARYPARAMERR, 'errmsg': '缺少参数'})
+        # 校验手机号
+        if not re.match(r'^1[3-9]\d{9}$', mobile):
+            return http.JsonResponse({'code': RETCODE.MOBILEERR, 'errmsg': '手机号错误'})
+        # 校验邮箱
+        if email and not re.match(r'^[a-z0-9][\w.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+            return http.JsonResponse({'code': RETCODE.EMAILERR, 'errmsg': '邮箱错误'})
+        # 校验固定电话
+        if tel and not re.match(r'^(0[0-9]{2,3}-)?([2-9][0-9]{6,7})+(-[0-9]{1,4})?$', tel):
+            return http.JsonResponse({'code': RETCODE.TELERR, 'errmsg': '固定电话错误'})
+        # 写入数据库
+        try:
+            new_address = Address.objects.create(
+                user=request.user,
+                title=title or receiver,
+                receiver=receiver,
+                province_id=province_id,
+                city_id=city_id,
+                district_id=district_id,
+                place=place,
+                mobile=mobile,
+                tel=tel,
+                email=email,
+                is_deleted=False,
+            )
+            # 设置默认地址
+            if not request.user.default_address:
+                request.user.default_address_id = new_address.id
+                request.user.save()
+
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '地址添加失败'})
+
+        # 响应结果
+        return http.JsonResponse({
+            'code': RETCODE.OK,
+            'errmsg': '新增地址成功',
+            'id': new_address.id,
+            'receiver': new_address.receiver,
+            'province': new_address.province.name,
+            'city': new_address.city.name,
+            'district': new_address.district.name,
+            'place': new_address.place,
+            'mobile': new_address.mobile,
+            'tel': new_address.tel,
+            'email': new_address.email,
+        })
 
 class AddressView(View):
     """用户收货地址"""

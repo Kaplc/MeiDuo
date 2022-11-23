@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from meiduo_project.utils.models import BaseModel
 
+
 # Create your models here.
 
 
@@ -29,9 +30,11 @@ class Address(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses', verbose_name='用户')
     title = models.CharField(max_length=20, verbose_name='地址名称')
     receiver = models.CharField(max_length=20, verbose_name='收货人')
-    province = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='province_addresses', verbose_name='省')
+    province = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='province_addresses',
+                                 verbose_name='省')
     city = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='city_addresses', verbose_name='市')
-    district = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='district_addresses', verbose_name='区')
+    district = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='district_addresses',
+                                 verbose_name='区')
     place = models.CharField(max_length=50, verbose_name='地址')
     mobile = models.CharField(max_length=11, verbose_name='手机')
     tel = models.CharField(max_length=20, null=True, blank=True, default='', verbose_name='固定电话')
@@ -43,4 +46,3 @@ class Address(BaseModel):
         verbose_name = '用户地址'
         verbose_name_plural = verbose_name
         ordering = ['-update_time']
-

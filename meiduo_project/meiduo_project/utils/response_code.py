@@ -2,6 +2,7 @@
 
 
 class RETCODE:
+
     OK = "0"
     IMAGECODEERR = "4001"
     THROTTLINGERR = "4002"
@@ -21,6 +22,7 @@ class RETCODE:
     OPENIDERR = "5005"
     PARAMERR = "5006"
     STOCKERR = "5007"
+    ADDRESSERR = "5008"
 
 
 err_msg = {
@@ -43,4 +45,5 @@ err_msg = {
     RETCODE.OPENIDERR: u"无效的openid",
     RETCODE.PARAMERR: u"参数错误",
     RETCODE.STOCKERR: u"库存不足",
+    RETCODE.ADDRESSERR: u"地址上限",
 }

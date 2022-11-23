@@ -29,6 +29,9 @@ let vm = new Vue({
         error_mobile: false,
         error_tel: false,
         error_email: false,
+
+        // 收货地址变量
+        address_num: '',
     },
     mounted() {
         // 获取省份数据
@@ -188,6 +191,7 @@ let vm = new Vue({
         },
         // 新增地址
         save_address(){
+            
             if (this.error_receiver || this.error_place || this.error_mobile || this.error_email || !this.form_address.province_id || !this.form_address.city_id || !this.form_address.district_id ) {
                 alert('信息填写有误！');
             } else {
