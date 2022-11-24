@@ -70,15 +70,18 @@ class UpdateDestroyAddressView(View):
             return http.JsonResponse({
                 'code': RETCODE.OK,
                 'errmsg': '修改地址成功',
-                'id': new_address.id,
-                'receiver': new_address.receiver,
-                'province': new_address.province.name,
-                'city': new_address.city.name,
-                'district': new_address.district.name,
-                'place': new_address.place,
-                'mobile': new_address.mobile,
-                'tel': new_address.tel,
-                'email': new_address.email,
+                'address': {
+                    'id': new_address.id,
+                    'title': new_address.title,
+                    'receiver': new_address.receiver,
+                    'province': new_address.province.name,
+                    'city': new_address.city.name,
+                    'district': new_address.district.name,
+                    'place': new_address.place,
+                    'mobile': new_address.mobile,
+                    'tel': new_address.tel,
+                    'email': new_address.email,
+                }
             })
         except Exception as e:
             logger.error(e)

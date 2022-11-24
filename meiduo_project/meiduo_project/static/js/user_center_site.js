@@ -233,9 +233,7 @@ let vm = new Vue({
                             if (response.data.code == '0') {
                                 this.is_show_edit = false;
                                 this.addresses[this.editing_address_index] = response.data.address;
-                                
-                            } else if (response.data.code == '4101') {
-                                location.href = '/login/?next=/addresses/';
+                                location.href = '/user_center_site.html/';
                             } else {
                                 alert(response.data.errmsg);
                             }
