@@ -71,7 +71,7 @@
 					<h3>传智播客 北京</h3>
 					<a href="javascript:;" class="edit_icon"></a>
 					<em>默认地址</em>						
-					<span class="del_site">×</span>
+					<span class="del_site">x</span>
 				</div>
 				<ul class="site_list">
 					<li><span>收货人：</span><b>传智播客</b></li>
@@ -124,7 +124,7 @@
             <div class="site_pop_title">
                 <h3 v-if="editing_address_index">编辑收货地址</h3>
                 <h3 v-else>新增收货地址</h3>
-                <a @click="is_show_edit=false">×</a>
+                <a @click="is_show_edit=false">x</a>
             </div>
             <form>
                 <div class="form_group">
@@ -164,7 +164,8 @@
                     <input v-model="form_address.email" @blur="check_email" type="text" class="email">
                     <span v-show="error_email" class="email_error">邮箱信息有误</span>
                 </div>
-                <input @click="save_address" type="button" name="" value="新 增" class="info_submit">
+				
+				<input @click="save_address" type="button" name="" value="新 增" class="info_submit">
                 <input @click="is_show_edit=false" type="reset" name="" value="取 消" class="info_submit info_reset">
             </form>
 		</div>

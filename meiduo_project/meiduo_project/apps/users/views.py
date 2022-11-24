@@ -82,6 +82,7 @@ class CreatAddressView(View):
             'code': RETCODE.OK,
             'errmsg': '新增地址成功',
             'id': new_address.id,
+            "title": new_address.title,
             'receiver': new_address.receiver,
             'province': new_address.province.name,
             'city': new_address.city.name,
@@ -92,13 +93,42 @@ class CreatAddressView(View):
             'email': new_address.email,
         })
 
+
 class AddressView(View):
     """用户收货地址"""
 
     def get(self, request):
         """展示收货地址页面"""
+        # 获取用户地址列表
+        login_user = request.user
+        try:
+            model_list = Address.objects.filter(user=login_user, is_deleted=False)
+            address_list = []
+            for address in model_list:
+                each_address_dict = {
+                    "id": address.id,
+                    "title": address.title,
+                    "receiver": address.receiver,
+                    "province": address.province.name,
+                    "city": address.city.name,
+                    "district": address.district.name,
+                    "place": address.place,
+                    "mobile": address.mobile,
+                    "tel": address.tel,
+                    "email": address.email
+                }
+                address_list.append(each_address_dict)
+            # 渲染模板
+            context = {
+                # 获取用户默认id
+                'default_address_id': login_user.default_address_id,
+                'addresses': address_list
+            }
+            return render(request, 'user_center_site.html', context)
 
-        return render(request, 'user_center_site.html')
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '查询地址失败'})
 
 
 class VerifyEmailView(View):
