@@ -20,6 +20,21 @@ from .utils import generate_verify_email_url, check_verify_email_token
 logger = logging.getLogger('django')
 
 
+class DefaultAddressView(View):
+    """设置默认地址"""
+
+    def put(self, request, address_id):
+        """设置默认地址"""
+        try:
+            address = Address.objects.get(id=address_id)
+            request.user.default_address = address
+            request.user.save()
+            return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '设置默认地址成功'})
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '设置默认地址失败'})
+
+
 class UpdateDestroyAddressView(View):
     """修改,删除收货地址"""
 
@@ -101,8 +116,6 @@ class UpdateDestroyAddressView(View):
         except Exception as e:
             logger.error(e)
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '删除失败'})
-
-
 
 
 class CreatAddressView(LoginRequiredMixin, View):

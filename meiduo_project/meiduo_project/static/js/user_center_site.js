@@ -281,7 +281,7 @@ let vm = new Vue({
                         // 设置默认地址标签
                         this.default_address_id = this.addresses[index].id;
                     } else if (response.data.code == '4101') {
-                        location.href = '/login/?next=/addresses/';
+                        location.href = '/user_center_site.html/';
                     } else {
                         alert(response.data.errmsg);
                     }

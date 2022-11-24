@@ -27,6 +27,8 @@ urlpatterns = [
     # 添加收货地址
     re_path(r'addresses/create/$', CreatAddressView.as_view()),
     # 修改, 删除收货地址
-    re_path(r'addresses/(?P<address_id>\d+)/$', UpdateDestroyAddressView.as_view())
+    re_path(r'addresses/(?P<address_id>\d+)/$', UpdateDestroyAddressView.as_view()),
+    # 设置默认地址
+    re_path(r'addresses/(?P<address_id>\d+)/default/$', DefaultAddressView.as_view()),
 
 ]
