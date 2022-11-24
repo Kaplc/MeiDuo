@@ -21,7 +21,7 @@ logger = logging.getLogger('django')
 
 
 class UpdateDestroyAddressView(View):
-    """修改收货地址"""
+    """修改,删除收货地址"""
 
     def put(self, request, address_id):
         """修改收货地址后端逻辑"""
@@ -86,6 +86,22 @@ class UpdateDestroyAddressView(View):
         except Exception as e:
             logger.error(e)
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '修改失败'})
+
+    def delete(self, request, address_id):
+        """删除收货地址"""
+        # 获取删除地址id
+        address_id = address_id
+        # 写入数据库
+        try:
+            address = Address.objects.get(id=address_id)
+            # 逻辑删除
+            address.is_deleted = True
+            address.save()
+            return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '删除成功'})
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '删除失败'})
+
 
 
 
