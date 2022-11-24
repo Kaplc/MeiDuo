@@ -25,5 +25,7 @@ urlpatterns = [
     # 展示收货地址页面
     re_path(r'user_center_site.html/$', AddressView.as_view(), name='address'),
     # 添加收货地址
-    re_path(r'addresses/create/$', CreatAddressView.as_view())
+    re_path(r'addresses/create/$', CreatAddressView.as_view()),
+    # 修改收货地址
+    re_path(r'addresses/(?P<address_id>\d+)/$', UpdateDestroyAddressView.as_view())
 ]

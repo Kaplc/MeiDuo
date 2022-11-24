@@ -231,8 +231,9 @@ let vm = new Vue({
                     })
                         .then(response => {
                             if (response.data.code == '0') {
-                                this.addresses[this.editing_address_index] = response.data.address;
                                 this.is_show_edit = false;
+                                this.addresses[this.editing_address_index] = response.data.address;
+                                
                             } else if (response.data.code == '4101') {
                                 location.href = '/login/?next=/addresses/';
                             } else {

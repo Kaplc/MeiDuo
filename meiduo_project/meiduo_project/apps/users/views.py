@@ -20,7 +20,73 @@ from .utils import generate_verify_email_url, check_verify_email_token
 logger = logging.getLogger('django')
 
 
-class CreatAddressView(View):
+class UpdateDestroyAddressView(View):
+    """修改收货地址"""
+
+    def put(self, request, address_id):
+        """修改收货地址后端逻辑"""
+        # 接收地址参数
+        address_id = address_id
+        # 接收表格参数
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        receiver = json_dict.get('receiver')
+        province_id = json_dict.get('province_id')
+        city_id = json_dict.get('city_id')
+        district_id = json_dict.get('district_id')
+        place = json_dict.get('place')
+        mobile = json_dict.get('mobile')
+        tel = json_dict.get('tel')
+        email = json_dict.get('email')
+        # 校验参数
+        if not all([receiver, province_id, city_id, district_id, place, mobile]):
+            return http.JsonResponse({'code': RETCODE.NECESSARYPARAMERR, 'errmsg': '缺少参数'})
+        # 校验手机号
+        if not re.match(r'^1[3-9]\d{9}$', mobile):
+            return http.JsonResponse({'code': RETCODE.MOBILEERR, 'errmsg': '手机号错误'})
+        # 校验邮箱
+        if email and not re.match(r'^[a-z0-9][\w.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+            return http.JsonResponse({'code': RETCODE.EMAILERR, 'errmsg': '邮箱错误'})
+        # 校验固定电话
+        if tel and not re.match(r'^(0[0-9]{2,3}-)?([2-9][0-9]{6,7})+(-[0-9]{1,4})?$', tel):
+            return http.JsonResponse({'code': RETCODE.TELERR, 'errmsg': '固定电话错误'})
+        # 写入数据库
+        try:
+            # 更改数据
+            Address.objects.filter(id=address_id).update(
+                user=request.user,
+                receiver=receiver,
+                province_id=province_id,
+                city_id=city_id,
+                district_id=district_id,
+                place=place,
+                mobile=mobile,
+                tel=tel,
+                email=email,
+            )
+            # 获取修改后的对象
+            new_address = Address.objects.get(id=address_id)
+            # 拼接响应数据
+            return http.JsonResponse({
+                'code': RETCODE.OK,
+                'errmsg': '修改地址成功',
+                'id': new_address.id,
+                'receiver': new_address.receiver,
+                'province': new_address.province.name,
+                'city': new_address.city.name,
+                'district': new_address.district.name,
+                'place': new_address.place,
+                'mobile': new_address.mobile,
+                'tel': new_address.tel,
+                'email': new_address.email,
+            })
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '修改失败'})
+
+
+
+class CreatAddressView(LoginRequiredMixin, View):
     """新增收货地址"""
 
     def post(self, request):
@@ -94,7 +160,7 @@ class CreatAddressView(View):
         })
 
 
-class AddressView(View):
+class AddressView(LoginRequiredMixin, View):
     """用户收货地址"""
 
     def get(self, request):
