@@ -103,6 +103,7 @@ class AddressView(View):
         login_user = request.user
         try:
             model_list = Address.objects.filter(user=login_user, is_deleted=False)
+            address_num = model_list.count()
             address_list = []
             for address in model_list:
                 each_address_dict = {
@@ -122,7 +123,7 @@ class AddressView(View):
             context = {
                 # 获取用户默认id
                 'default_address_id': login_user.default_address_id,
-                'addresses': address_list
+                'addresses': address_list,
             }
             return render(request, 'user_center_site.html', context)
 
