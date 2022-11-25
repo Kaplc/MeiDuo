@@ -31,5 +31,7 @@ urlpatterns = [
     # 设置默认地址
     re_path(r'addresses/(?P<address_id>\d+)/default/$', DefaultAddressView.as_view()),
     # 设置地址标题
-    re_path(r'addresses/(?P<address_id>\d+)/title/$', UpdateTitleAddressView.as_view())
+    re_path(r'addresses/(?P<address_id>\d+)/title/$', UpdateTitleAddressView.as_view()),
+    # 修改密码
+    re_path(r'user_center_pass.html/$', ChangePasswordView.as_view(), name='pass')
 ]

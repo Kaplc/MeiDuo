@@ -20,6 +20,52 @@ from .utils import generate_verify_email_url, check_verify_email_token
 logger = logging.getLogger('django')
 
 
+class ChangePasswordView(LoginRequiredMixin, View):
+    """修改密码"""
+
+    def get(self, request):
+        """展示修改密码界面"""
+        return render(request, 'user_center_pass.html')
+
+    def post(self, request):
+        """修改密码"""
+        # 接收参数
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        new_password2 = request.POST.get('new_password2')
+
+        # 校验参数
+        if not all([old_password, new_password, new_password2]):
+            return http.HttpResponseForbidden('缺少必传参数')
+        try:
+            # 校验旧密码
+            request.user.check_password(old_password)
+        except Exception as e:
+            logger.error(e)
+            return render(request, 'user_center_pass.html', {'origin_password_errmsg': '旧密码错误'})
+        # 判断密码是否是8-20个数字
+        if not re.match(r'^.{8,20}$', new_password):
+            return http.HttpResponseForbidden('密码长度不符合')
+        if not (re.match(r'.*[a-zA-Z]+.*', new_password) and re.match(r'.*[0-9]+.*', new_password)):
+            return http.HttpResponseForbidden('密码强度不符合')
+        # 判断两次密码是否一致
+        if not (new_password == new_password2):
+            return http.HttpResponseForbidden('两次密码不一致')
+        # 写入数据库
+        try:
+            request.user.set_password(new_password)
+            request.user.save()
+        except Exception as e:
+            logger.error(e)
+            return render(request, 'user_center_pass.html', {'change_password_errmsg': '修改失败'})
+        # 清理状态保持信息
+        logout(request)  # 登出
+        response = redirect('contents:index')  # 重定向到首页
+        response.delete_cookie('username')  # 清除cookie
+
+        return response
+
+
 class UpdateTitleAddressView(View):
     """修改地址标题"""
 
