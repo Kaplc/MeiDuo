@@ -319,7 +319,7 @@ let vm = new Vue({
                             this.addresses[index].title = this.new_title;
                             this.cancel_title();
                         } else if (response.data.code == '4101') {
-                            location.href = '/login/?next=/addresses/';
+                            location.href = '/user_center_site.html/';
                         } else {
                             alert(response.data.errmsg);
                         }

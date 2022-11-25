@@ -20,6 +20,28 @@ from .utils import generate_verify_email_url, check_verify_email_token
 logger = logging.getLogger('django')
 
 
+class UpdateTitleAddressView(View):
+    """修改地址标题"""
+
+    def put(self, request, address_id):
+        """修改地址"""
+        # 接收参数
+        address_id = address_id
+        json_str = request.body.decode()
+        json_data = json.loads(json_str)
+        title = json_data.get('title')
+        # 写入数据库
+        try:
+            # 查询address
+            address = Address.objects.get(id=address_id)
+            address.title = title
+            address.save()
+            return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '修改地址标题成功'})
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '修改地址标题失败'})
+
+
 class DefaultAddressView(View):
     """设置默认地址"""
 

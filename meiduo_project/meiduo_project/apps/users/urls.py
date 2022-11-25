@@ -30,5 +30,6 @@ urlpatterns = [
     re_path(r'addresses/(?P<address_id>\d+)/$', UpdateDestroyAddressView.as_view()),
     # 设置默认地址
     re_path(r'addresses/(?P<address_id>\d+)/default/$', DefaultAddressView.as_view()),
-
+    # 设置地址标题
+    re_path(r'addresses/(?P<address_id>\d+)/title/$', UpdateTitleAddressView.as_view())
 ]
