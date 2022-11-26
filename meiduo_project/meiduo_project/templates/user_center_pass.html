@@ -68,7 +68,8 @@
                         {{ csrf_input }}
                         <div class="form_group">
                             <label>当前密码：</label>
-                            <input type="password" v-model="old_password" @blur="check_old_password" name="old_password">
+                            <input :type="type_old_password" v-model="old_password" @blur="check_old_password" name="old_password">
+							<a @click="show_old_password" href="javascript:;">[[show_old_password_msg]]</a>
 							<span v-show="error_old_password" class="old_pwd_error">密码最少8位，最长20位</span>
                             {% if origin_password_errmsg %}
                                 <span class="old_pwd_error">{{ origin_password_errmsg }}</span>
@@ -76,12 +77,14 @@
                         </div>
                         <div class="form_group">
                             <label>新密码：</label>
-							<input type="password" v-model="new_password" @blur="check_new_password" name="new_password">
+							<input :type="type_new_password" v-model="new_password" @blur="check_new_password" name="new_password">
+							<a @click="show_new_password" href="javascript:;">[[show_new_password_msg]]</a>
 							<span v-show="error_new_password" class="new_pwd_error">[[ error_new_password_message ]]</span>
                         </div>
                         <div class="form_group">
                             <label>确认新密码：</label>
-                            <input type="password" v-model="new_password2" @blur="check_new_password2" name="new_password2">
+                            <input :type="type_new_password2" v-model="new_password2" @blur="check_new_password2" name="new_password2">
+							<a @click="show_new_password2" href="javascript:;">[[show_new_password2_msg]]</a>
 							<span v-show="error_new_password2" class="new_cpwd_error">两次输入的密码不一致</span>
                             {% if change_password_errmsg %}
                                 <span class="new_cpwd_error">{{ change_password_errmsg }}</span>

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'verifications',  # 认证模块
     'oauth',  # QQ登录模块
     'areas',  # 省市区查询模块
+    'goods',  # 商品信息模块
 ]
 
 MIDDLEWARE = [

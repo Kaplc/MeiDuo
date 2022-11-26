@@ -11,6 +11,19 @@ let vm = new Vue({
         error_new_password2: false,
 
         error_new_password_message: '',
+        // v-bind显示密码
+        type_old_password: 'password',
+        type_new_password: 'password',
+        type_new_password2: 'password',
+        // 变量
+        show_old_password_msg: '显示',
+        show_new_password_msg: '显示',
+        show_new_password2_msg: '显示',
+
+        // 显示信号
+        show_old_password_flag: false,
+        show_new_password_flag: false,
+        show_new_password2_flag: false,
     },
     methods: {
         // 检查旧密码
@@ -72,6 +85,43 @@ let vm = new Vue({
                 // 不满足修改密码条件：禁用表单
 				window.event.returnValue = false
             }
+        },
+        // 显示密码
+        show_old_password(){
+            if(this.show_old_password_flag == true){
+                this.type_old_password = 'password'
+                this.show_old_password_msg = '显示'
+                this.show_old_password_flag = false
+            }else{
+                this.type_old_password = 'text'
+                this.show_old_password_msg = '隐藏'
+                this.show_old_password_flag = true
+            }
+            
+        },
+        show_new_password(){
+            if(this.show_new_password_flag == true){
+                this.type_new_password = 'password'
+                this.show_new_password_msg = '显示'
+                this.show_new_password_flag = false
+            }else{
+                this.type_new_password = 'text'
+                this.show_new_password_msg = '隐藏'
+                this.show_new_password_flag = true
+            }
+            
+        },
+        show_new_password2(){
+            if(this.show_new_password2_flag == true){
+                this.type_new_password2 = 'password'
+                this.show_new_password2_msg = '显示'
+                this.show_new_password2_flag = false
+            }else{
+                this.type_new_password2 = 'text'
+                this.show_new_password2_msg = '隐藏'
+                this.show_new_password2_flag = true
+            }
+            
         },
     }
 });
