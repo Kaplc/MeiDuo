@@ -3,6 +3,35 @@ from collections import OrderedDict
 from goods.models import GoodsChannel
 
 
+def get_breadcrumb(category):
+    """
+    查询面包屑导航
+    :param category: 商品类别
+    :return: 字典
+    """
+    # 三级->二级->一级
+    breadcrumb = {
+        'cat1': '',
+        'cat2': '',
+        'cat3': '',
+    }
+    if category.parent is None:
+        # 没有父类别->一级标题
+        category['cat1'] = category
+    elif category.subs.count() == 0:
+        # 没有子类别->三级标题
+        category['cat3'] = category
+        cat2 = category.parent
+        category['cat2'] = cat2
+        category['cat1'] = cat2.parent
+    else:
+        # 二级标题
+        category['cat1'] = category.parent
+        category['cat2'] = category
+
+    return breadcrumb
+
+
 def get_categories():
     """查询商品分类三级联动"""
     categories = OrderedDict()  # 有序字典
