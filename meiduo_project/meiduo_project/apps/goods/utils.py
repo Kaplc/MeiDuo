@@ -15,19 +15,20 @@ def get_breadcrumb(category):
         'cat2': '',
         'cat3': '',
     }
+
     if category.parent is None:
         # 没有父类别->一级标题
-        category['cat1'] = category
+        breadcrumb['cat1'] = category
     elif category.subs.count() == 0:
         # 没有子类别->三级标题
-        category['cat3'] = category
+        breadcrumb['cat3'] = category
         cat2 = category.parent
-        category['cat2'] = cat2
-        category['cat1'] = cat2.parent
+        breadcrumb['cat2'] = cat2
+        breadcrumb['cat1'] = cat2.parent
     else:
         # 二级标题
-        category['cat1'] = category.parent
-        category['cat2'] = category
+        breadcrumb['cat1'] = category.parent
+        breadcrumb['cat2'] = category
 
     return breadcrumb
 

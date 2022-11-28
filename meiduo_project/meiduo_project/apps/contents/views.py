@@ -1,9 +1,15 @@
+from django import http
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from collections import OrderedDict
-from goods.utils import get_categories
+from goods.utils import get_categories, get_breadcrumb
 from .models import ContentCategory
+from goods.models import GoodsCategory
+
+import logging
+
+logger = logging.getLogger('django')
 
 
 class ListView(View):
@@ -11,8 +17,23 @@ class ListView(View):
 
     def get(self, request, category_id, page_num):
         """展示页面"""
+        # 校验查询category_id
+        try:
+            category = GoodsCategory.objects.get(id=category_id)
 
-        return render(request, 'list.html')
+        except Exception as e:
+            logger.error(e)
+            return http.HttpResponseNotFound('未找到数据')
+        # 查询商品分类
+        categories = get_categories()
+        # 查询面包屑导航
+        breadcrumb = get_breadcrumb(category)
+        # jinja渲染内容
+        context ={
+            'categories': categories,
+            'breadcrumb': breadcrumb,
+        }
+        return render(request, 'list.html', context)
 
 
 class RedirectIndex(View):
