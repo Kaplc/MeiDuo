@@ -5,6 +5,16 @@ from collections import OrderedDict
 from goods.utils import get_categories
 from .models import ContentCategory
 
+
+class ListView(View):
+    """商品列表页"""
+
+    def get(self, request, category_id, page_num):
+        """展示页面"""
+
+        return render(request, 'list.html')
+
+
 class RedirectIndex(View):
     """重定向到首页"""
 

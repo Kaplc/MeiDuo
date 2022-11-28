@@ -1,0 +1,1 @@
+celery -A celery_tasks.main worker --pool=solo -l info
