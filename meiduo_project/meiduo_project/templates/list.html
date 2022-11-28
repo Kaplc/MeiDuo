@@ -144,7 +144,7 @@
 			<ul class="goods_type_list clearfix">
                 {% for sku in sku_page %}
                     <li>
-                        <a href="detail.html"><img src="{{ sku.default_image_url }}"></a>
+                        <a href="detail.html"><img src="{{ sku.default_image_url.url }}"></a>
                         <h4><a href="detail.html">{{ sku.name }}</a></h4>
                         <div class="operate">
                             <span class="price">{{sku.price}}</span>
@@ -155,7 +155,13 @@
                 {% endfor %}
 			</ul>
 		</div>
+        <div class="r_wrap fr clearfix">
+            <div class="pagenation">
+                <div id="pagination" class="page"></div>
+            </div>
+        </div>
 	</div>
+
 	<div class="footer">
 		<div class="foot_link">
 			<a href="#">关于我们</a>
@@ -179,11 +185,11 @@
 	<script>
         $(function () {
             $('#pagination').pagination({
-                currentPage: 1,
-                totalPage: 3,
+                currentPage: {{page_num}},
+                totalPage: {{total_page}},
                 callback:function (current) {
                     {#location.href = '/list/115/1/?sort=default';#}
-                    {#location.href = '/list/{{ category.id }}/' + current + '/?sort={{ sort }}';#}
+                    location.href = '/list.html/{{ category.id }}/' + current + '/?sort={{ sort }}';
                 }
             })
         });

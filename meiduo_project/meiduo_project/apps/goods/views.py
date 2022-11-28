@@ -1,3 +1,5 @@
+import json
+
 from django import http
 from django.core.paginator import Paginator
 from django.shortcuts import render
@@ -5,6 +7,7 @@ from django.views import View
 from .contents import *
 from goods.models import GoodsCategory, SKU
 from goods.utils import get_categories, get_breadcrumb
+from django.conf import settings
 import logging
 
 logger = logging.getLogger('django')
@@ -41,14 +44,14 @@ class ListView(View):
             sort_field = 'create_time'
         try:
             # 查询sku商品预览(条件: 商品类别, 是否上架)
-            sku = SKU.objects.filter(category_id=category_id, is_launched=True).order_by(sort_field)
+            skus = SKU.objects.filter(category_id=category_id, is_launched=True).order_by(sort_field)
 
         except Exception as e:
             logger.error(e)
             return http.HttpResponseNotFound('找不到商品信息')
 
         # sku分页
-        paginator = Paginator(sku, CONTENT_QUANTITY)  # Paginator(分页内容, 每页数量)
+        paginator = Paginator(skus, CONTENT_QUANTITY)  # Paginator(分页内容, 每页数量)
         # 获取每页数据
         try:
             sku_page = paginator.page(page_num)
@@ -66,6 +69,8 @@ class ListView(View):
             'page_num': page_num,       # 当前所在页
             'total_page': total_page,   # 总页数
             'category': category,       # 当前商品类别
+            'fdfs_url': settings.FDFS_BASE_URL,
 
         }
+
         return render(request, 'list.html', context)
