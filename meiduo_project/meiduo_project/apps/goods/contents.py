@@ -1,0 +1,1 @@
+CONTENT_QUANTITY = 5  # 每页内容数量
