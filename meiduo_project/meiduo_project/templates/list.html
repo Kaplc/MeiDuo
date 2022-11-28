@@ -86,7 +86,7 @@
 										<div class="group_name fl">{{ cat2.name }} &gt;</div>
 											<div class="group_detail fl">
 												{% for cat3 in cat2.sub_cats %}
-													 <a href="http://pdd42.bolinkang.cn:8081/list.html/{{cat3.id}}/1/?sort=default">{{ cat3.name }}</a>
+													 <a href="{{ url('goods:list', args=(cat3.id, 1)) }}?sort=default">{{ cat3.name }}</a>
 												{% endfor %}
 	
 	
