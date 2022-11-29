@@ -7,10 +7,40 @@ from django.views import View
 from .contents import *
 from goods.models import GoodsCategory, SKU
 from goods.utils import get_categories, get_breadcrumb
-from django.conf import settings
+from meiduo_project.utils.response_code import RETCODE
+
 import logging
 
 logger = logging.getLogger('django')
+
+
+class HotGoodsView(View):
+    """热销排行"""
+
+    def get(self, request, category_id):
+        """展示热销排行"""
+        # 查找商品sku
+        try:
+            # -sales销量降序, 切片取前两个
+            skus = SKU.objects.filter(category_id=category_id, is_launched=True).order_by('-sales')[0:2]
+
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '热销排行查询失败'})
+        # model_list转json数据
+        skus_list = []
+        for sku in skus:
+            skus_list.append({
+                'id': sku.id,
+                'default_image_url': sku.default_image_url.url,
+                'name': sku.name,
+                'price': sku.price,
+            })
+        return http.JsonResponse({
+            'code': RETCODE.OK,
+            'errmsg': 'OK',
+            'hot_skus': skus_list
+        })
 
 
 class ListView(View):
@@ -62,15 +92,14 @@ class ListView(View):
         total_page = paginator.num_pages
         # jinja渲染内容
         context = {
-            'categories': categories,   # 商品分类列表
-            'breadcrumb': breadcrumb,   # 面包屑导航
-            'sku_page': sku_page,       # 每页数据
-            'sort': sort,               # 排序规则
-            'page_num': page_num,       # 当前所在页
-            'total_page': total_page,   # 总页数
-            'category': category,       # 当前商品类别
-            'fdfs_url': settings.FDFS_BASE_URL,
-
+            'categories': categories,  # 商品分类列表
+            'breadcrumb': breadcrumb,  # 面包屑导航
+            'sku_page': sku_page,  # 每页数据
+            'sort': sort,  # 排序规则
+            'page_num': page_num,  # 当前所在页
+            'total_page': total_page,  # 总页数
+            'category_id': category_id,  # 当前商品类别id
+            'category': category,  # 当前商品类别
         }
 
         return render(request, 'list.html', context)
