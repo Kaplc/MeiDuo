@@ -78,26 +78,23 @@
 					{% for group in categories.values() %}
 						<li>
 							<div class="level1">
-								{% for cat1 in group.channels %}
-									<a href="{{ cat1.url }}">{{ cat1.name }}</a>
-								{% endfor %}
-							</div>
-							<div class="level2">
-								{% for cat2 in group.sub_cats %}
-									<div class="list_group">
-										<div class="group_name fl">{{ cat2.name }} &gt;</div>
-											<div class="group_detail fl">
-												{% for cat3 in cat2.sub_cats %}
-													 <a href="{{ url('goods:list', args=(cat3.id, 1)) }}?sort=default">{{ cat3.name }}</a>
-												{% endfor %}
-	
-	
-											</div>
-										</div>
-								{% endfor %}
-						</div>
+                                {% for cat1 in group.channels %}
+                                    <a href="{{ cat1.url }}">{{ cat1.name }}</a>
+                                {% endfor %}
+                            </div>
+                            <div class="level2">
+                                {% for cat2 in group.sub_cats %}
+                                    <div class="list_group">
+                                        <div class="group_name fl">{{ cat2.name }} &gt;</div>
+                                            <div class="group_detail fl">
+                                                {% for cat3 in cat2.sub_cats %}
+                                                     <a href="{{ url('goods:list', args=(cat3.id, 1)) }}?sort=default">{{ cat3.name }}</a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                {% endfor %}
+                            </div>
 						</li>
-	
 					{% endfor %}
 				</ul>
 			</div>

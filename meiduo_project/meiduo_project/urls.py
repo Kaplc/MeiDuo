@@ -30,5 +30,7 @@ urlpatterns = [
     # areas
     re_path(r'^', include('areas.urls', namespace='areas')),
     # goods
-    re_path(r'^', include('goods.urls', namespace='goods'))
+    re_path(r'^', include('goods.urls', namespace='goods')),
+    # haystack路由
+    re_path(r'^search/', include('haystack.urls')),
 ]

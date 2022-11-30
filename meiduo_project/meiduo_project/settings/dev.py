@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'oauth',  # QQ登录模块
     'areas',  # 省市区查询模块
     'goods',  # 商品信息模块
+    'haystack',  # 全文检索
 ]
 
 MIDDLEWARE = [
@@ -124,7 +125,8 @@ DATABASES = {
         'PORT': 3306,  # 数据库端口
         'USER': 'zzy',  # 数据库用户名
         'PASSWORD': '111111',  # 数据库用户密码
-        'NAME': 'meiduo'  # 数据库名字
+        'NAME': 'meiduo',  # 数据库名字
+
     },
 }
 
@@ -294,3 +296,16 @@ DEFAULT_FILE_STORAGE = 'meiduo_project.utils.fastdfs.fdfs_storage.FastDFSStorage
 # FastDFS相关参数
 FDFS_BASE_URL = 'http://192.168.136.128:8888/'
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+
+# --------------------------haystack--------------------------- #
+# Haystack
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://192.168.136.128:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
+        'INDEX_NAME': 'meiduo_mall',  # Elasticsearch建立的索引库的名称
+    },
+}
+
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
