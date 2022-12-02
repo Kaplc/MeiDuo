@@ -14,6 +14,15 @@ import logging
 logger = logging.getLogger('django')
 
 
+class DetailView(View):
+    """商品详情"""
+
+    def get(self, request, sku_id):
+        """展示商品详情页"""
+
+        return render(request, 'detail_sku.html')
+
+
 class HotGoodsView(View):
     """热销排行"""
 
