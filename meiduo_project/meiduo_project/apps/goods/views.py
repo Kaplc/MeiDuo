@@ -21,7 +21,7 @@ class DetailView(View):
         """展示商品详情页"""
         # 接收参数
         sku_id = sku_id
-        # 校验参数
+        # 校验参数, 获取sku信息
         try:
             sku = SKU.objects.get(id=sku_id)
 
