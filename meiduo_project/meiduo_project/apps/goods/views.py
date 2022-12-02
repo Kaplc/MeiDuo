@@ -8,7 +8,7 @@ from .contents import *
 from goods.models import GoodsCategory, SKU
 from goods.utils import get_categories, get_breadcrumb
 from meiduo_project.utils.response_code import RETCODE
-
+from .utils import get_categories, get_breadcrumb
 import logging
 
 logger = logging.getLogger('django')
@@ -19,8 +19,27 @@ class DetailView(View):
 
     def get(self, request, sku_id):
         """展示商品详情页"""
+        # 接收参数
+        sku_id = sku_id
+        # 校验参数
+        try:
+            sku = SKU.objects.get(id=sku_id)
 
-        return render(request, 'detail_sku.html')
+        except Exception as e:
+            logger.error(e)
+            return render(request, '404.html')
+
+        # 获取商品分类
+        categories = get_categories()
+        # 获取面包屑导航
+        breadcrumb = get_breadcrumb(sku.category)
+        # jinja2渲染内容
+        context = {
+            'categories': categories,
+            'breadcrumb': breadcrumb,
+
+        }
+        return render(request, 'detail_sku.html', context)
 
 
 class HotGoodsView(View):
@@ -110,5 +129,9 @@ class ListView(View):
             'category_id': category_id,  # 当前商品类别id
             'category': category,  # 当前商品类别
         }
-
+        for tsku in sku_page:
+            id = tsku.id
+            url = tsku.default_image_url.url
+            name = tsku.name
+            pass
         return render(request, 'list.html', context)

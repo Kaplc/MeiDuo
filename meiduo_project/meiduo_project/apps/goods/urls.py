@@ -9,6 +9,6 @@ urlpatterns = [
     # 展示热销排行
     re_path(r'hot/(?P<category_id>\d+)/$', HotGoodsView.as_view()),
     # 展示商品详情
-    re_path(r'detail.html/(?P<sku_id>\d+)/$', DetailView.as_view())
+    re_path(r'detail/(?P<sku_id>\d+)/$', DetailView.as_view(), name='detail')
 
 ]
