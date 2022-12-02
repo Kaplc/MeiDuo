@@ -37,6 +37,7 @@ class DetailView(View):
         context = {
             'categories': categories,
             'breadcrumb': breadcrumb,
+            'sku': sku,
 
         }
         return render(request, 'detail_sku.html', context)
