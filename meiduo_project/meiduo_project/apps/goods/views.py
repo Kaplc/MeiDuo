@@ -3,17 +3,63 @@ import json
 
 from django import http
 from django.core.paginator import Paginator
+from django.db.models.functions import datetime
 from django.shortcuts import render
+from django.utils import timezone
 from django.views import View
 from .contents import *
-from goods.models import GoodsCategory, SKU, SKUSpecification, SPUSpecification,SpecificationOption
-from goods.utils import get_categories, get_breadcrumb
+from goods.models import GoodsCategory, SKU, GoodsVisitCount
 from meiduo_project.utils.response_code import RETCODE
 from .utils import get_categories, get_breadcrumb
 import logging
 
 logger = logging.getLogger('django')
 
+
+class DetailVisitView(View):
+    """统计商品访问量"""
+
+    def post(self, request, category_id):
+        """
+        统计商品访问量
+        :param request:
+        :param category_id: 商品分类ID，第三级分类
+        :return:JSON
+        """
+        # 校验参数
+        try:
+            category = GoodsCategory.objects.get(id=category_id)
+
+        except Exception as e:
+            logger.error(e)
+            return http.HttpResponseForbidden('缺少必传参数')
+
+        # 获取日期
+        time = timezone.localtime()
+        # 日期字符串
+        time_str = '%d-%02d-%02d' % (time.year, time.month, time.day)
+        # 转datetime类型的日期对象
+        time_object = datetime.datetime.strptime(time_str, '%Y-%m-%d')
+        # 查询今日该商品访问量, 没有则新建
+        try:
+            counts_data = category.goodsvisitcount_set.get(date=time_object)
+
+        except Exception as e:
+            logger.error(e)
+            # 找不到记录就新建对象
+            counts_data = GoodsVisitCount()
+
+        try:
+            counts_data.category = category
+            counts_data.date = time_object
+            counts_data.count += 1
+            counts_data.save()
+
+        except Exception as e:
+            logger.error(e)
+            return http.HttpResponseServerError('服务器错误')
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
 class DetailView(View):
     """商品详情"""
@@ -75,7 +121,6 @@ class DetailView(View):
                 # 查找规格2不变时规格1变化的skuid并赋值
                 spec_option.sku_id = skuid_option_dict.get(tuple(key))
 
-
         # jinja2渲染内容
         context = {
             'categories': categories,
@@ -84,6 +129,7 @@ class DetailView(View):
             'specs': goods_specs,
             'sku_options': sku_options_list,
         }
+
         return render(request, 'detail_sku.html', context)
 
 
