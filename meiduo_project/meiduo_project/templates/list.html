@@ -184,7 +184,7 @@
                 totalPage: {{total_page}},
                 callback:function (current) {
                     {#location.href = '/list/115/1/?sort=default';#}
-                    location.href = '/list.html/{{ category.id }}/' + current + '/?sort={{ sort }}';
+                    location.href = '/list/{{ category.id }}/' + current + '/?sort={{ sort }}';
                 }
             })
         });

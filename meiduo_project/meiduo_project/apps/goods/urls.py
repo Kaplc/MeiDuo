@@ -5,7 +5,7 @@ app_name = 'goods'
 
 urlpatterns = [
     # 展示商品列表
-    re_path(r'list.html/(?P<category_id>\d+)/(?P<page_num>\d+)/$', ListView.as_view(), name='list'),
+    re_path(r'list/(?P<category_id>\d+)/(?P<page_num>\d+)/$', ListView.as_view(), name='list'),
     # 展示热销排行
     re_path(r'hot/(?P<category_id>\d+)/$', HotGoodsView.as_view()),
     # 展示商品详情
