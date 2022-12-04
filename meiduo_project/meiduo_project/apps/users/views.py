@@ -15,7 +15,7 @@ from meiduo_project.utils.parameter import SETTING_TIME
 from meiduo_project.utils.response_code import RETCODE
 from .models import User, Address
 from .utils import generate_verify_email_url, check_verify_email_token
-
+from goods.models import SKU
 # Create your views here.
 logger = logging.getLogger('django')
 
@@ -25,8 +25,30 @@ class UserBrowseHistory(View):
 
     def post(self, request):
         """保存用户浏览记录"""
+        # 接收参数
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        sku_id = json_dict['sku_id']
+        user_id = request.user
+        # 校验参数
+        try:
+            SKU.objects.get(id=sku_id)
 
-        pass
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': 'skuid错误'})
+        # 保存数据
+        conn_redis = get_redis_connection('history')
+        pl = conn_redis.pipeline()
+        # 去重(LREM key count value)
+        pl.lrem('history_%s' % user_id, 0, sku_id)
+        # 添加(LPUSH key value)
+        pl.lpush('history_%s' % user_id, sku_id)
+        # 切片(LTRIM key start stop)
+        pl.ltrim('history_%s' % user_id, 0, 4)
+        pl.execute()
+        # 响应json
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
 
 class ChangePasswordView(LoginRequiredMixin, View):
@@ -37,7 +59,7 @@ class ChangePasswordView(LoginRequiredMixin, View):
         return render(request, 'user_center_pass.html')
 
     def post(self, request):
-        """修改密码"""
+        """接收修改密码参数"""
         # 接收参数
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
