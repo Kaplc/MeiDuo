@@ -23,6 +23,11 @@ logger = logging.getLogger('django')
 class UserBrowseHistory(View):
     """用户浏览记录"""
 
+    def get(self, request):
+        """显示用户浏览记录"""
+
+        pass
+
     def post(self, request):
         """保存用户浏览记录"""
         # 接收参数
