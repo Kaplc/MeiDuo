@@ -20,6 +20,15 @@ from .utils import generate_verify_email_url, check_verify_email_token
 logger = logging.getLogger('django')
 
 
+class UserBrowseHistory(View):
+    """用户浏览记录"""
+
+    def post(self, request):
+        """保存用户浏览记录"""
+
+        pass
+
+
 class ChangePasswordView(LoginRequiredMixin, View):
     """修改密码"""
 

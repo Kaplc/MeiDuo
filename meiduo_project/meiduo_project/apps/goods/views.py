@@ -130,7 +130,7 @@ class DetailView(View):
             'sku_options': sku_options_list,
         }
 
-        return render(request, 'detail_sku.html', context)
+        return render(request, 'detail.html', context)
 
 
 class HotGoodsView(View):
