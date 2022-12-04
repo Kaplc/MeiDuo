@@ -134,7 +134,7 @@
                         {% if option.curr_option == True %}
                             <a href="javascript:;" class="select">{{option.value}}</a>
                         {% else %}
-                            <a href="{{ url('goods:detail', args=(option.sku_id, )) }}">{{option.value}}</a>
+                            <a href="{{ url('goods:detail', args=(option.sku_id,)) }}">{{option.value}}</a>
                         {% endif %}
                     {% endfor %}
 
