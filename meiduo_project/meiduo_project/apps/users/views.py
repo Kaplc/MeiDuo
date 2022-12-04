@@ -25,8 +25,28 @@ class UserBrowseHistory(View):
 
     def get(self, request):
         """显示用户浏览记录"""
+        # 查询redis
+        conn_redis = get_redis_connection('history')
+        # 返回列表 key 中指定区间内的元素(LRANGE key start stop)
+        sku_ids = conn_redis.lrange('history_%s' % request.user.id, 0, -1)
+        # 查询sku
+        skus = []
+        try:
+            for sku_id in sku_ids:
+                sku = SKU.objects.get(id=sku_id)
+                skus_dict = {
+                    'id': sku.id,
+                    'name': sku.name,
+                    'default_image_url': sku.default_image_url.url,
+                    'price': sku.price
+                }
+                skus.append(skus_dict)
 
-        pass
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR})
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'skus': skus})
 
     def post(self, request):
         """保存用户浏览记录"""
@@ -34,7 +54,7 @@ class UserBrowseHistory(View):
         json_str = request.body.decode()
         json_dict = json.loads(json_str)
         sku_id = json_dict['sku_id']
-        user_id = request.user
+        user_id = request.user.id
         # 校验参数
         try:
             SKU.objects.get(id=sku_id)
