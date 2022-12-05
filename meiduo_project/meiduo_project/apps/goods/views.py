@@ -101,7 +101,7 @@ class DetailView(View):
         # 获取当前商品的所有规格种类
         goods_specs = sku.spu.specs.all()
         for index, spec in enumerate(goods_specs):
-            # 复制当前选项的列表
+            # 深拷贝复制当前选项的列表
             key = copy.deepcopy(sku_options_list)
             # 获取当前规格种类的所有选项
             # 动态将选项集合写入spec_options对象
