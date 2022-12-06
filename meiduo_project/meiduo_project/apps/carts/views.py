@@ -2,7 +2,7 @@ import json
 
 from django import http
 from django.shortcuts import render
-
+from django_redis import get_redis_connection
 from goods.models import SKU
 from utils.response_code import *
 from django.views import View
@@ -47,7 +47,17 @@ class CartsView(View):
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': 'selected参数错误'})
         if user.is_authenticated:
             # 已登录, redis
-            pass
+            conn_redis = get_redis_connection('carts')
+            pl = conn_redis.pipeline()
+            # HINCRBY key field increment
+            # 为哈希表 key 中的域 field 的值加上增量 increment
+            pl.hincrby('carts_%s' % user.id, sku_id, count)
+            if selected:
+                # selected不为空添加
+                pl.sadd('selected_%s' % user.id, sku_id)
+            # 执行
+            pl.execute()
+            return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
         else:
             # 未登录, cookie
             pass
