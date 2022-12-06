@@ -1,3 +1,4 @@
+import decimal
 import json
 from .utils import cookie_to_dict, dict_to_cookie
 from django import http
@@ -16,14 +17,67 @@ class CartsView(View):
 
     def get(self, request):
         """展示购物车"""
-        if request.user.is_authenticated:
+        user = request.user
+
+        if user.is_authenticated:
             # 登录用户
-            pass
+            conn_redis = get_redis_connection('carts')
+            sku_ids = conn_redis.hkeys('carts_%s' % user.id)  # 购物车所有sku
+            try:
+                skus = SKU.objects.filter(id__in=sku_ids)
+            except Exception as e:
+                logger.error(e)
+                return render(request, '404.html')
+
+            for sku in skus:
+
+                count = conn_redis.hget('carts_%s' % user.id, sku.id).decode()  # 当前商品的数量
+                selected = conn_redis.sismember('selects_%s' % user.id, sku.id)  # 判断是否勾选
+
+                if selected:
+                    selected = True
+                else:
+                    selected = False
+                # 数据动态绑定到sku
+                sku.selected = selected
+                sku.count = count
+
         else:
             # 未登录用户
-            pass
+            # 获取cookie购物车
+            carts_dict = cookie_to_dict(request.COOKIES.get('carts'))
+            sku_ids = carts_dict.keys()
+            try:
+                skus = SKU.objects.filter(id__in=sku_ids)
+            except Exception as e:
+                logger.error(e)
+                return render(request, '404.html')
+            for sku in skus:
+                sku.count = carts_dict[sku.id]['count']
+                sku.selected = carts_dict[sku.id]['selected']
 
-        return render(request, 'cart.html')
+        # 定义购物车sku信息列表
+        cart_skus = []
+        total_amount = 0
+        for sku in skus:
+            cart_skus.append({
+                'id': sku.id,
+                'name': sku.name,
+                'count': sku.count,
+                'selected': sku.selected,
+                'default_image_url': sku.default_image_url.url,
+                'price': sku.price,
+                'amount': decimal.Decimal(sku.count) * sku.price
+            })
+            total_amount += decimal.Decimal(sku.count) * sku.price
+
+        context = {
+            'goods_count': len(cart_skus),
+            'total_amount': total_amount,
+            'cart_skus': cart_skus,
+        }
+
+        return render(request, 'cart.html', context)
 
     def post(self, request):
         """添加购物车"""
@@ -66,7 +120,6 @@ class CartsView(View):
                 pl.sadd('selected_%s' % user.id, sku_id)
             # 执行
             pl.execute()
-
         else:
             # 未登录, cookie
             # 获取cookie
@@ -89,7 +142,6 @@ class CartsView(View):
                     'count': count,
                 }
             dict_carts[sku_id]['selected'] = selected
-
             cookie_carts = dict_to_cookie(dict_carts)
             response.set_cookie('carts', cookie_carts)
 

@@ -59,42 +59,28 @@
 		<li class="col05">小计</li>
 		<li class="col06">操作</li>
 	</ul>
-	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="selected" checked></li>
-		<li class="col02"><img src="{{ static('images/goods/goods001.jpg') }}"></li>
-		<li class="col03">华为 HUAWEI P10 Plus 6GB+64GB 钻雕金 移动联通电信4G手机 双卡双待</li>
-		<li class="col04">台</li>
-		<li class="col05">2999.00元</li>
-		<li class="col06">
-			<div class="num_add">
-				<a href="javascript:;" class="add fl">+</a>
-				<input type="text" class="num_show fl" value="1" autocomplete="off">
-				<a href="javascript:;" class="minus fl">-</a>	
-			</div>
-		</li>
-		<li class="col07">2999.00元</li>
-		<li class="col08"><a href="javascript:;">删除</a></li>
-	</ul>
-	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="selected" checked></li>
-		<li class="col02"><img src="{{ static('images/goods/goods002.jpg') }}"></li>
-		<li class="col03">Apple iPhoneX 64GB 深空灰色 移动联通电信4G手机</li>
-		<li class="col04">台</li>
-		<li class="col05">3999.00元</li>
-		<li class="col06">
-			<div class="num_add">
-				<a href="javascript:;" class="add fl">+</a>
-				<input type="text" class="num_show fl" value="1" autocomplete="off">
-				<a href="javascript:;" class="minus fl">-</a>	
-			</div>
-		</li>
-		<li class="col07">3999.00元</li>
-		<li class="col08"><a href="javascript:;">删除</a></li>
-	</ul>
+         {% for cart_sku in cart_skus %}
+            <ul class="cart_list_td clearfix">
+                <li class="col01"><input type="checkbox" name="selected" checked></li>
+                <li class="col02"><img src="{{ cart_sku.default_image_url }}"></li>
+                <li class="col03">{{cart_sku.name}}</li>
+                <li class="col04">台</li>
+                <li class="col05">{{cart_sku.price}}</li>
+                <li class="col06">
+                    <div class="num_add">
+                        <a href="javascript:;" class="add fl">+</a>
+                        <input type="text" class="num_show fl" value="{{ cart_sku.count }}" autocomplete="off">
+                        <a href="javascript:;" class="minus fl">-</a>
+                    </div>
+                </li>
+                <li class="col07">{{cart_sku.amount}}</li>
+                <li class="col08"><a href="javascript:;">删除</a></li>
+            </ul>
+         {% endfor %}
 	<ul class="settlements">
 		<li class="col01"><input type="checkbox" name="selected_all" checked=""></li>
 		<li class="col02">全选</li>
-		<li class="col03">合计(不含运费)：<span>¥</span><em>6998</em><br>共计<b>2</b>件商品</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em>{{ total_amount }}</em><br>共计<b>{{ goods_count }}</b>件商品</li>
 		<li class="col04"><a href="place_order.html">去结算</a></li>
 	</ul>
 	<div class="footer">
