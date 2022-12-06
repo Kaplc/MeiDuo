@@ -15,6 +15,16 @@ logger = logging.getLogger('django')
 class CartsView(View):
     """购物车"""
 
+    def put(self, request):
+        """修改购物车"""
+        user = request.user
+        if user.is_authenticated:
+            # 已登录
+            pass
+        else:
+            # 未登录
+            pass
+
     def get(self, request):
         """展示购物车"""
         user = request.user
