@@ -1,5 +1,5 @@
 import json
-
+from .utils import cookie_to_dict, dict_to_cookie
 from django import http
 from django.shortcuts import render
 from django_redis import get_redis_connection
@@ -45,6 +45,8 @@ class CartsView(View):
         # selected是否bool
         if not isinstance(selected, bool):
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': 'selected参数错误'})
+
+        response = http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
         if user.is_authenticated:
             # 已登录, redis
             conn_redis = get_redis_connection('carts')
@@ -57,8 +59,31 @@ class CartsView(View):
                 pl.sadd('selected_%s' % user.id, sku_id)
             # 执行
             pl.execute()
-            return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+
         else:
             # 未登录, cookie
-            pass
-        pass
+            # 获取cookie
+            cookie_carts = request.COOKIES.get('carts')
+            if cookie_carts:
+                # 有购物车cookie转dict
+                dict_carts = cookie_to_dict(cookie_carts)
+            else:
+                # 没有购物车创建空字典
+                dict_carts = {}
+            # 添加数据
+
+            if dict_carts.get(sku_id):
+                # skuid重复
+                # 增量
+                dict_carts[sku_id]['count'] += count
+            else:
+                # 新商品
+                dict_carts[sku_id] = {
+                    'count': count,
+                }
+            dict_carts[sku_id]['selected'] = selected
+
+            cookie_carts = dict_to_cookie(dict_carts)
+            response.set_cookie('carts', cookie_carts)
+
+        return response
