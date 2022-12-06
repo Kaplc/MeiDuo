@@ -16,8 +16,12 @@ class CartsView(View):
 
     def get(self, request):
         """展示购物车"""
-
-        pass
+        if request.user.is_authenticated:
+            # 登录用户
+            pass
+        else:
+            # 未登录用户
+            pass
 
     def post(self, request):
         """添加购物车"""
