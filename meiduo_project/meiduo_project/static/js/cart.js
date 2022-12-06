@@ -57,7 +57,7 @@ let vm = new Vue({
             let amount = 0;
             let total_count = 0;
             for(let i=0; i<this.carts.length; i++){
-                if(this.carts[i].selected) {
+                if(this.carts[i].selected == true) {
                     amount += parseFloat(this.carts[i].price) * parseInt(this.carts[i].count);
                     total_count += parseInt(this.carts[i].count);
                 }
@@ -69,20 +69,18 @@ let vm = new Vue({
         on_minus(index){
             if (this.carts[index].count > 1) {
                 let count = this.carts[index].count - 1;
+                this.carts[index].count -= 1
                 // this.carts[index].count = count; // 本地测试
                 this.update_count(index, count); // 请求服务器
             }
+
         },
         // 增加操作
         on_add(index){
             let count = 1;
-            if (this.carts[index].count < 5) {
-                count = this.carts[index].count + 1;
-            } else {
-                count = 5;
-                alert('超过商品数量上限');
-            }
-            // this.carts[index].count = count; // 本地测试
+            count = this.carts[index].count + 1;
+            this.carts[index].count += 1
+            this.carts[index].count = count; // 本地测试
             this.update_count(index, count); // 请求服务器
         },
         // 数量输入框输入操作
@@ -90,9 +88,8 @@ let vm = new Vue({
             let count = parseInt(this.carts[index].count);
             if (isNaN(count) || count <= 0) {
                 count = 1;
-            } else if (count > 5) {
-                count = 5;
-                alert('超过商品数量上限');
+            }else{
+                
             }
             this.update_count(index, count); // 请求服务器
         },
@@ -113,7 +110,9 @@ let vm = new Vue({
                 .then(response => {
                     if (response.data.code == '0') {
                         // this.carts[index].count = response.data.cart_sku.count; // 无法触发页面更新
-                        Vue.set(this.carts, index, response.data.cart_sku); // 触发页面更新
+                        // Vue.set(this.carts, index, response.data.cart_sku); // 触发页面更新
+                        // 修改小计数据
+                        this.carts[index].amount = (count * this.carts[index].price).toFixed(2)
                         // 重新计算界面的价格和数量
                         this.compute_total_selected_amount_count();
                         this.compute_total_count();

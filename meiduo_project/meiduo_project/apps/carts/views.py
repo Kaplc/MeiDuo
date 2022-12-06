@@ -17,13 +17,28 @@ class CartsView(View):
 
     def put(self, request):
         """修改购物车"""
+        # 接收参数
         user = request.user
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
         if user.is_authenticated:
             # 已登录
-            pass
+            conn_redis = get_redis_connection('carts')
+            pl = conn_redis.pipeline()
+            # 用新count覆盖
+            pl.hset('carts_%s' % user.id, json_dict['sku_id'], json_dict['count'])
+            pl.execute()
+            # 更新是否勾选
+            if json_dict['selected']:
+                pl.sadd('selected_%s' % user.id, json_dict['sku_id'])
+            else:
+                pl.srem('selected_%s' % user.id, json_dict['sku_id'])
+
         else:
             # 未登录
             pass
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
     def get(self, request):
         """展示购物车"""
@@ -31,8 +46,14 @@ class CartsView(View):
 
         if user.is_authenticated:
             # 登录用户
+
             conn_redis = get_redis_connection('carts')
             sku_ids = conn_redis.hkeys('carts_%s' % user.id)  # 购物车所有sku
+            if not sku_ids:
+                context = {
+                    'cart_skus': [],
+                }
+                return render(request, 'cart.html', context)
             try:
                 skus = SKU.objects.filter(id__in=sku_ids)
             except Exception as e:
@@ -42,12 +63,11 @@ class CartsView(View):
             for sku in skus:
 
                 count = conn_redis.hget('carts_%s' % user.id, sku.id).decode()  # 当前商品的数量
-                selected = conn_redis.sismember('selects_%s' % user.id, sku.id)  # 判断是否勾选
-
+                selected = conn_redis.sismember('selected_%s' % user.id, sku.id)  # 判断是否勾选
                 if selected:
-                    selected = True
+                    selected = 'True'
                 else:
-                    selected = False
+                    selected = 'False'
                 # 数据动态绑定到sku
                 sku.selected = selected
                 sku.count = count
@@ -55,6 +75,13 @@ class CartsView(View):
         else:
             # 未登录用户
             # 获取cookie购物车
+            cookie_carts = request.COOKIES.get('carts')
+            if not cookie_carts:
+                context = {
+                    'cart_skus': [],
+                }
+                return render(request, 'cart.html', context)
+
             carts_dict = cookie_to_dict(request.COOKIES.get('carts'))
             sku_ids = carts_dict.keys()
             try:
@@ -64,7 +91,7 @@ class CartsView(View):
                 return render(request, '404.html')
             for sku in skus:
                 sku.count = carts_dict[sku.id]['count']
-                sku.selected = carts_dict[sku.id]['selected']
+                sku.selected = str(carts_dict[sku.id]['selected'])
 
         # 定义购物车sku信息列表
         cart_skus = []
@@ -73,11 +100,11 @@ class CartsView(View):
             cart_skus.append({
                 'id': sku.id,
                 'name': sku.name,
-                'count': sku.count,
+                'count': int(sku.count),
                 'selected': sku.selected,
                 'default_image_url': sku.default_image_url.url,
-                'price': sku.price,
-                'amount': decimal.Decimal(sku.count) * sku.price
+                'price': str(sku.price),
+                'amount': str(decimal.Decimal(sku.count) * sku.price)
             })
             total_amount += decimal.Decimal(sku.count) * sku.price
 
