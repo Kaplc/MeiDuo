@@ -23,6 +23,8 @@ class CartsView(View):
             # 未登录用户
             pass
 
+        return render(request, 'cart.html')
+
     def post(self, request):
         """添加购物车"""
         # 接收参数
