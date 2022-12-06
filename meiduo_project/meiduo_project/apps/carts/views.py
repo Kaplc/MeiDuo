@@ -16,6 +16,7 @@ class CartsView(View):
 
     def get(self, request):
         """展示购物车"""
+
         pass
 
     def post(self, request):
