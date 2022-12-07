@@ -21,6 +21,9 @@ class CartsView(View):
         user = request.user
         json_str = request.body.decode()
         json_dict = json.loads(json_str)
+        if not all([json_dict['sku_id'], json_dict['count']]):
+            return http.HttpResponseForbidden('缺少参数')
+        response = http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
         if user.is_authenticated:
             # 已登录
             conn_redis = get_redis_connection('carts')
@@ -36,9 +39,14 @@ class CartsView(View):
 
         else:
             # 未登录
-            pass
 
-        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+            cookie_carts = request.COOKIES.get('carts')
+            dict_carts = cookie_to_dict(cookie_carts)
+            dict_carts[json_dict['sku_id']]['count'] = json_dict['count']
+            dict_carts[json_dict['sku_id']]['selected'] = json_dict['selected']
+            cookie_carts = dict_to_cookie(dict_carts)
+            response.set_cookie('carts', cookie_carts)
+        return response
 
     def get(self, request):
         """展示购物车"""
