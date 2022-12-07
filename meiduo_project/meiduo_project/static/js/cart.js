@@ -8,18 +8,19 @@ let vm = new Vue({
         total_selected_count: 0,
         total_selected_amount: 0,
         carts_tmp: [],
+        selected_all: false
     },
     computed: {
-        selected_all(){
-            let selected=true;
-            for(let i=0; i<this.carts.length; i++){
-                if(this.carts[i].selected==false){
-                    selected=false;
-                    break;
-                }
-            }
-            return selected;
-        },
+        // selected_all(){
+        //     let selected=true;
+        //     for(let i=0; i<this.carts.length; i++){
+        //         if(this.carts[i].selected==false){
+        //             selected=false;
+        //             break;
+        //         }
+        //     }
+        //     return selected;
+        // },
     },
     mounted(){
         // 初始化购物车数据并渲染界面
@@ -186,7 +187,7 @@ let vm = new Vue({
         },
         // 购物车全选
         on_selected_all(){
-            let selected = !this.selected_all;
+            let selected = this.selected_all;
             let url = '/carts/selection/';
             axios.put(url, {
                 selected
@@ -202,6 +203,8 @@ let vm = new Vue({
                         for (let i=0; i<this.carts.length;i++){
                             this.carts[i].selected = selected;
                         }
+
+                        this.selected_all = !this.selected_all
                         // 重新计算界面的价格和数量
                         this.compute_total_selected_amount_count();
                         this.compute_total_count();

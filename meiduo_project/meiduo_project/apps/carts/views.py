@@ -18,10 +18,36 @@ class CartsSelectAllView(View):
     def put(self, request):
         """全选购物车"""
         # 接收参数
-        # 校验参数
-        # 修改
+        user = request.user
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        selected = str(json_dict['selected'])
+        if not all([selected]):
+            return http.HttpResponseForbidden('缺少参数')
+        response = http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+        if user.is_authenticated:
+            # 已登录
+            conn_redis = get_redis_connection('carts')
+            # 获取的是dict
+            carts_dict = conn_redis.hgetall('carts_%s' % user.id)
+            # 获取dict的所有key
+            carts_dict_keys = carts_dict.keys()
+            # 更新是否勾选
+            if selected:
+                conn_redis.sadd('selected_%s' % user.id, *carts_dict_keys)
+            else:
+                conn_redis.srem('selected_%s' % user.id, *carts_dict_keys)
 
-        pass
+        else:
+            # 未登录
+
+            cookie_carts = request.COOKIES.get('carts')
+            dict_carts = cookie_to_dict(cookie_carts)
+            for carts_sku in dict_carts:
+                dict_carts[carts_sku]['selected'] = selected
+            cookie_carts = dict_to_cookie(dict_carts)
+            response.set_cookie('carts', cookie_carts)
+        return response
 
 
 class CartsView(View):
