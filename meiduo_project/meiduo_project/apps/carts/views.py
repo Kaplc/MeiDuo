@@ -21,8 +21,9 @@ class CartsView(View):
         user = request.user
         json_str = request.body.decode()
         json_dict = json.loads(json_str)
+        sku_id = json_dict['sku_id']
         # 校验参数
-        if not all([json_dict['sku_id']]):
+        if not all([sku_id]):
             return http.HttpResponseForbidden('缺少参数')
         # 删除数据
         response = http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
@@ -31,17 +32,15 @@ class CartsView(View):
             conn_redis = get_redis_connection('carts')
             pl = conn_redis.pipeline()
             # 删除购物车商品
-            pl.hdel('carts_%s' % user.id, json_dict['sku_id'])
+            pl.hdel('carts_%s' % user.id, sku_id)
             # 删除勾选
-            pl.srem('selected_%s' % user.id, json_dict['sku_id'])
+            pl.srem('selected_%s' % user.id, sku_id)
             pl.execute()
         else:
             # 未登录
-
             cookie_carts = request.COOKIES.get('carts')
             dict_carts = cookie_to_dict(cookie_carts)
-            dict_carts[json_dict['sku_id']]['count'] = json_dict['count']
-            dict_carts[json_dict['sku_id']]['selected'] = json_dict['selected']
+            del dict_carts[sku_id]
             cookie_carts = dict_to_cookie(dict_carts)
             response.set_cookie('carts', cookie_carts)
         return response
@@ -52,7 +51,10 @@ class CartsView(View):
         user = request.user
         json_str = request.body.decode()
         json_dict = json.loads(json_str)
-        if not all([json_dict['sku_id'], json_dict['count']]):
+        sku_id = json_dict['sku_id']
+        count = json_dict['count']
+        selected = json_dict['selected']
+        if not all([sku_id, count]):
             return http.HttpResponseForbidden('缺少参数')
         response = http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
         if user.is_authenticated:
@@ -60,20 +62,20 @@ class CartsView(View):
             conn_redis = get_redis_connection('carts')
             pl = conn_redis.pipeline()
             # 用新count覆盖
-            pl.hset('carts_%s' % user.id, json_dict['sku_id'], json_dict['count'])
+            pl.hset('carts_%s' % user.id, sku_id, count)
             # 更新是否勾选
-            if json_dict['selected']:
-                pl.sadd('selected_%s' % user.id, json_dict['sku_id'])
+            if selected:
+                pl.sadd('selected_%s' % user.id, sku_id)
             else:
-                pl.srem('selected_%s' % user.id, json_dict['sku_id'])
+                pl.srem('selected_%s' % user.id, sku_id)
             pl.execute()
         else:
             # 未登录
 
             cookie_carts = request.COOKIES.get('carts')
             dict_carts = cookie_to_dict(cookie_carts)
-            dict_carts[json_dict['sku_id']]['count'] = json_dict['count']
-            dict_carts[json_dict['sku_id']]['selected'] = json_dict['selected']
+            dict_carts[sku_id]['count'] = count
+            dict_carts[sku_id]['selected'] = selected
             cookie_carts = dict_to_cookie(dict_carts)
             response.set_cookie('carts', cookie_carts)
         return response
