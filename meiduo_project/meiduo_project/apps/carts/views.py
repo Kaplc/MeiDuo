@@ -12,6 +12,18 @@ import logging
 logger = logging.getLogger('django')
 
 
+class CartsSelectAllView(View):
+    """全选购物车"""
+
+    def put(self, request):
+        """全选购物车"""
+        # 接收参数
+        # 校验参数
+        # 修改
+
+        pass
+
+
 class CartsView(View):
     """购物车"""
 
