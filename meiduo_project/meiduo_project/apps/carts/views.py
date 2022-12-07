@@ -15,6 +15,37 @@ logger = logging.getLogger('django')
 class CartsView(View):
     """购物车"""
 
+    def delete(self, request):
+        """删除购物车"""
+        # 接收参数
+        user = request.user
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        # 校验参数
+        if not all([json_dict['sku_id']]):
+            return http.HttpResponseForbidden('缺少参数')
+        # 删除数据
+        response = http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+        if user.is_authenticated:
+            # 已登录
+            conn_redis = get_redis_connection('carts')
+            pl = conn_redis.pipeline()
+            # 删除购物车商品
+            pl.hdel('carts_%s' % user.id, json_dict['sku_id'])
+            # 删除勾选
+            pl.srem('selected_%s' % user.id, json_dict['sku_id'])
+            pl.execute()
+        else:
+            # 未登录
+
+            cookie_carts = request.COOKIES.get('carts')
+            dict_carts = cookie_to_dict(cookie_carts)
+            dict_carts[json_dict['sku_id']]['count'] = json_dict['count']
+            dict_carts[json_dict['sku_id']]['selected'] = json_dict['selected']
+            cookie_carts = dict_to_cookie(dict_carts)
+            response.set_cookie('carts', cookie_carts)
+        return response
+
     def put(self, request):
         """修改购物车"""
         # 接收参数
@@ -30,13 +61,12 @@ class CartsView(View):
             pl = conn_redis.pipeline()
             # 用新count覆盖
             pl.hset('carts_%s' % user.id, json_dict['sku_id'], json_dict['count'])
-            pl.execute()
             # 更新是否勾选
             if json_dict['selected']:
                 pl.sadd('selected_%s' % user.id, json_dict['sku_id'])
             else:
                 pl.srem('selected_%s' % user.id, json_dict['sku_id'])
-
+            pl.execute()
         else:
             # 未登录
 
