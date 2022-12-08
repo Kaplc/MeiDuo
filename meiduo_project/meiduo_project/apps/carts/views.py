@@ -12,6 +12,15 @@ import logging
 logger = logging.getLogger('django')
 
 
+class CartsSimpleView(View):
+    """简单购物车"""
+
+    def get(self, request):
+        """展示简单购物车"""
+
+        pass
+
+
 class CartsSelectAllView(View):
     """全选购物车"""
 
