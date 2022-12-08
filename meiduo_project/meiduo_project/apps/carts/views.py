@@ -17,8 +17,61 @@ class CartsSimpleView(View):
 
     def get(self, request):
         """展示简单购物车"""
+        user = request.user
+        if user.is_authenticated:
+            # 登录用户查询redis
+            conn_redis = get_redis_connection('carts')
+            redis_carts = conn_redis.hgetall('carts_%s' % user.id)
+            selected_sku_ids = conn_redis.smembers('selected_%s' % user.id)
+            # 构造cookie购物车数据结构方便后续查询
+            carts_dict = {}
+            for sku_id, count in redis_carts.items():
+                selected = 'false'
+                for selected_sku_id in selected_sku_ids:
 
-        pass
+                    if selected_sku_id == sku_id:
+                        selected = 'true'
+                carts_dict[sku_id.decode()] = {
+                    'count': count.decode(),
+                    'selected': selected
+                }
+
+        else:
+            # 未登录查询cookie
+            cookie_carts = request.COOKIES.get('carts')
+            carts_dict = cookie_to_dict(cookie_carts)
+
+        # 查询sku集合
+        try:
+            carts_sku_ids = carts_dict.keys()
+            skus = SKU.objects.filter(id__in=carts_sku_ids)
+
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '查询失败'})
+
+        # sku数据列表
+        skus_list = []
+        for sku in skus:
+            for carts_sku_id in carts_sku_ids:
+                if sku.id == carts_sku_id:
+                    # 构造响应数据sku列表
+                    skus_list.append({
+                        'id': sku.id,
+                        'name': sku.name,
+                        'count': carts_dict[sku.id]['count'],
+                        'default_image_url': sku.default_image_url.url
+                    })
+
+        # 构造响应json
+        response_json = {
+            'code': RETCODE.OK,
+            'errmsg': 'OK',
+            'carts_skus': skus_list
+        }
+
+        return http.JsonResponse(response_json)
+
 
 
 class CartsSelectAllView(View):
