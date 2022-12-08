@@ -31,8 +31,8 @@ class CartsSimpleView(View):
 
                     if selected_sku_id == sku_id:
                         selected = 'true'
-                carts_dict[sku_id.decode()] = {
-                    'count': count.decode(),
+                carts_dict[int(sku_id.decode())] = {
+                    'count': int(count.decode()),
                     'selected': selected
                 }
 
@@ -67,11 +67,10 @@ class CartsSimpleView(View):
         response_json = {
             'code': RETCODE.OK,
             'errmsg': 'OK',
-            'carts_skus': skus_list
+            'cart_skus': skus_list
         }
 
         return http.JsonResponse(response_json)
-
 
 
 class CartsSelectAllView(View):
