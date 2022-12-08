@@ -16,7 +16,7 @@ from meiduo_project.utils.response_code import RETCODE
 from .models import User, Address
 from .utils import generate_verify_email_url, check_verify_email_token
 from goods.models import SKU
-# Create your views here.
+from carts.utils import merge_cart_cookie_to_redis
 logger = logging.getLogger('django')
 
 
@@ -507,7 +507,8 @@ class LoginView(View):
             # 注册登录时把用户名写入cookie, 保存12小时
             response.set_cookie('username', user.username, max_age=3600 * 12)
             pass
-
+        # 合并购物车
+        response = merge_cart_cookie_to_redis(request, response)
         return response
 
 

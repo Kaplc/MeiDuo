@@ -1,6 +1,6 @@
 import decimal
 import json
-from .utils import cookie_to_dict, dict_to_cookie
+from .utils import cookie_to_dict, dict_to_cookie, merge_cart_cookie_to_redis
 from django import http
 from django.shortcuts import render
 from django_redis import get_redis_connection
@@ -154,11 +154,18 @@ class CartsView(View):
             # 未登录用户
             # 获取cookie购物车
             cookie_carts = request.COOKIES.get('carts')
+
             if not cookie_carts:
+                # 没有购物车创建空字典返回
+                dict_carts = {}
+                cookie_carts = dict_to_cookie(dict_carts)
                 context = {
                     'cart_skus': [],
                 }
-                return render(request, 'cart.html', context)
+                response = render(request, 'cart.html', context)
+
+                response.set_cookie('carts', cookie_carts)
+                return response
 
             carts_dict = cookie_to_dict(request.COOKIES.get('carts'))
             sku_ids = carts_dict.keys()
@@ -208,7 +215,7 @@ class CartsView(View):
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '缺少参数'})
         # skuid是否存在
         try:
-            sku = SKU.objects.get(id=sku_id)
+            SKU.objects.get(id=sku_id)
         except Exception as e:
             logger.error(e)
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '缺少skuid参数'})

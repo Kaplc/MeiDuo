@@ -15,6 +15,7 @@ from .models import OAuthQQUser
 import logging
 from meiduo_project.utils.parameter import SETTING_TIME
 from .utils import generate_access_token, check_access_token
+from carts.utils import merge_cart_cookie_to_redis
 
 # 创建日志器对象
 logger = logging.getLogger('django')
@@ -70,6 +71,8 @@ class QQAuthUserView(View):
             response = redirect(next_url)
             # 设置cookie
             response.set_cookie('username', qq_user.username, max_age=SETTING_TIME.COOKIE_USERNAME_EXPIRES)
+            # 合并购物车
+            response = merge_cart_cookie_to_redis(request, response)
             return response
 
     def post(self, request):
@@ -119,7 +122,6 @@ class QQAuthUserView(View):
         except Exception as e:
             logger.error(e)
             return render(request, 'oauth_callback.html', {'qq_login_errmsg': 'QQ登录失败'})
-
 
         # 状态保持
         login(request, user)
