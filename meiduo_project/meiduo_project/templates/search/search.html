@@ -31,7 +31,7 @@
                     <span>|</span>
                     <a href="{{ url('users:center_info') }}">用户中心</a>
                     <span>|</span>
-                    <a href="cart.html">我的购物车</a>
+                    <a href="{{ url('carts:carts') }}">我的购物车</a>
                     <span>|</span>
                     <a href="user_center_order.html">我的订单</a>
                 </div>
@@ -63,7 +63,7 @@
                         <div class="operate">
                             <span class="price">￥{{result.object.price}}</span>
                             <span class="unit">台</span>
-                            <a href="#" class="add_goods" title="加入购物车"></a>
+                            <a @click="add_carts({{ result.object.id }})" href="#" class="add_goods" title="加入购物车"></a>
                         </div>
                     </li>
                 {% else %}
