@@ -5,7 +5,7 @@ from django.views import View
 from collections import OrderedDict
 from goods.utils import get_categories
 from .models import ContentCategory
-
+from carts.utils import dict_to_cookie
 import logging
 
 logger = logging.getLogger('django')
@@ -34,5 +34,8 @@ class IndexView(View):
             'categories': categories,
             'contents': contents,
         }
-
-        return render(request, 'index.html', context)
+        response = render(request, 'index.html', context)
+        # 没有购物车cookie则创建
+        if request.COOKIES.get('carts'):
+            response.set_cookie('carts', dict_to_cookie({}))
+        return response
