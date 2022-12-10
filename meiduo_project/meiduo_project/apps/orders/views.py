@@ -10,6 +10,16 @@ import logging
 logger = logging.getLogger('django')
 
 
+class OrderCommitView(LoginRequiredMixin, View):
+    """订单提交"""
+
+    def post(self, request):
+        """保存订单信息, 订单商品信息"""
+        # 接收参数
+
+        pass
+
+
 class OrderSettlementView(LoginRequiredMixin, View):
     """结算订单"""
 

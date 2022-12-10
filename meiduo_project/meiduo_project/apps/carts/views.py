@@ -5,7 +5,7 @@ from django import http
 from django.shortcuts import render
 from django_redis import get_redis_connection
 from goods.models import SKU
-from utils.response_code import *
+from meiduo_project.utils.response_code import *
 from django.views import View
 import logging
 
