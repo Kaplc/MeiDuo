@@ -1,10 +1,17 @@
 import decimal
+
+from django.utils import timezone
+
 from users.models import *
 from goods.models import *
 from django.shortcuts import render
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_redis import get_redis_connection
+from django import http
+from users import models
+from . import models
+import json
 import logging
 
 logger = logging.getLogger('django')
@@ -16,7 +23,37 @@ class OrderCommitView(LoginRequiredMixin, View):
     def post(self, request):
         """保存订单信息, 订单商品信息"""
         # 接收参数
-
+        user = request.user
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        address_id = json_dict['address_id']
+        pay_method = json_dict['pay_method']
+        # 校验参数
+        if not all([address_id, pay_method]):
+            return http.HttpResponseForbidden('缺少参数')
+        # 校验地址
+        try:
+            address = models.Address.objects.get(id=address_id)
+        except Exception as e:
+            logger.error(e)
+            return http.HttpResponseForbidden('地址错误')
+        # 校验支付方式
+        if pay_method not in (models.OrderInfo.PAY_METHODS_ENUM['CASH'], models.OrderInfo.PAY_METHODS_ENUM['ALIPAY']):
+            return http.HttpResponseForbidden('支付方式错误')
+        # 生成订单号(时间+用户id)
+        order_id = timezone.localtime().strftime('%Y%m%d%H%M%S') + ('%09d' % user.id)
+        # 保存订单信息
+        models.OrderInfo.objects.create(
+            order_id=order_id,
+            user=user,
+            address=address,
+            total_count=0,
+            total_amount=decimal.Decimal(0.00),
+            freight=decimal.Decimal(0.00),
+            pay_method=pay_method,
+            status=models.OrderInfo.ORDER_STATUS_ENUM['UNPAID'] if pay_method == models.OrderInfo.PAY_METHODS_ENUM[
+                'ALIPAY'] else models.OrderInfo.ORDER_STATUS_ENUM['UNSEND']
+        )
         pass
 
 
