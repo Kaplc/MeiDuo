@@ -17,6 +17,22 @@ import logging
 logger = logging.getLogger('django')
 
 
+class OrderSuccessView(View):
+    """订单提交成功"""
+
+    def get(self, request):
+        """展示订单提交成功页面"""
+        order_id = request.GET.get('order_id')
+        payment_amount = request.GET.get('payment_amount')
+        pay_method = request.GET.get('pay_method')
+        context = {
+            'order_id': order_id,
+            'payment_amount': payment_amount,
+            'pay_method': pay_method
+        }
+        return render(request, 'order_success.html', context)
+
+
 class OrderCommitView(LoginRequiredMixin, View):
     """订单提交"""
 
@@ -30,13 +46,13 @@ class OrderCommitView(LoginRequiredMixin, View):
         pay_method = json_dict['pay_method']
         # 校验参数
         if not all([address_id, pay_method]):
-            return http.HttpResponseForbidden('缺少参数')
+            return http.JsonResponse({'code': RETCODE.NODATAERR, 'errmsg': '请选择支付方式'})
         # 校验地址
         try:
             address = models.Address.objects.get(id=address_id)
         except Exception as e:
             logger.error(e)
-            return http.HttpResponseForbidden('地址错误')
+            return http.JsonResponse({'code': RETCODE.NODATAERR, 'errmsg': '请选择收货地址'})
 
         # 开启事务
         with transaction.atomic():
@@ -133,12 +149,12 @@ class OrderCommitView(LoginRequiredMixin, View):
 
             except Exception as e:
                 logger.error(e)
-                return http.HttpResponseServerError('订单商品信息写入失败')
+                return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '下单失败请刷新'})
 
             # 提交事务
             transaction.savepoint_commit(save_id)
 
-        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '下单成功', 'order_Id': order_id})
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '下单成功', 'order_id': order_id})
 
 
 class OrderSettlementView(LoginRequiredMixin, View):
