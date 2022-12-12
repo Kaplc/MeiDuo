@@ -59,8 +59,10 @@ class OrderCommitView(LoginRequiredMixin, View):
                     total_amount=decimal.Decimal(0.00),
                     freight=decimal.Decimal(0.00),
                     pay_method=pay_method,
-                    status=models.OrderInfo.ORDER_STATUS_ENUM['UNPAID'] if pay_method == models.OrderInfo.PAY_METHODS_ENUM[
-                        'ALIPAY'] else models.OrderInfo.ORDER_STATUS_ENUM['UNSEND']
+                    status=models.OrderInfo.ORDER_STATUS_ENUM['UNPAID'] if pay_method ==
+                                                                           models.OrderInfo.PAY_METHODS_ENUM[
+                                                                               'ALIPAY'] else
+                    models.OrderInfo.ORDER_STATUS_ENUM['UNSEND']
                 )
 
                 # 保存订单商品信息
@@ -68,38 +70,54 @@ class OrderCommitView(LoginRequiredMixin, View):
                 # 获取sku
                 conn_redis = get_redis_connection('carts')
                 selected_skus = conn_redis.smembers('selected_%s' % user.id)  # 已勾选的商品
-                skus = SKU.objects.filter(id__in=selected_skus)  # 已勾选的商品sku
-                # 写入count
-                total_count = 0
-                total_amount = 0
+                while True:
+                    skus = SKU.objects.filter(id__in=selected_skus)  # 已勾选的商品sku
+                    # 写入count
+                    total_count = 0
+                    total_amount = 0
 
-                for sku in skus:
-                    # 获取该商品的购买数量
-                    sku.count = int(conn_redis.hget('carts_%s' % user.id, sku.id).decode())  # 已勾选的商品数量
-                    # 判断商品库存
-                    if sku.count > sku.stock:
-                        # 库存不足回滚事务
-                        transaction.savepoint_rollback(save_id)
-                        return http.JsonResponse({'code': RETCODE.STOCKERR, 'errmsg': '库存不足'})
-                    # 计算该商品购买小计
-                    sku.subtotal_amount = sku.price * decimal.Decimal(sku.count)
-                    # 计算订单购买总数
-                    total_count += sku.count
-                    # 计算订单购买总金额(不含邮费)
-                    total_amount += sku.subtotal_amount
-                    # 修改销量和库存
-                    sku.spu.sales += sku.count  # 修改spu
-                    sku.stock -= sku.count
-                    sku.sales += sku.count
-                    sku.save()
-                    sku.spu.save()
-                    # 写入订单商品信息
-                    models.OrderGoods.objects.create(
-                        order=order,
-                        sku=sku,
-                        count=sku.count,
-                        price=sku.price,
-                    )
+                    for sku in skus:
+                        # 获取该商品的购买数量
+                        sku.count = int(conn_redis.hget('carts_%s' % user.id, sku.id).decode())  # 已勾选的商品数量
+                        # 判断商品库存
+                        if sku.count > sku.stock:
+                            # 库存不足回滚事务
+                            transaction.savepoint_rollback(save_id)
+                            return http.JsonResponse({'code': RETCODE.STOCKERR, 'errmsg': '库存不足'})
+                        # 计算该商品购买小计
+                        sku.subtotal_amount = sku.price * decimal.Decimal(sku.count)
+                        # 计算订单购买总数
+                        total_count += sku.count
+                        # 计算订单购买总金额(不含邮费)
+                        total_amount += sku.subtotal_amount
+
+                        # 修改销量和库存
+                        # sku.spu.sales += sku.count  # 修改spu
+                        # sku.stock -= sku.count
+                        # sku.sales += sku.count
+                        # sku.save()
+                        # sku.spu.save()
+
+                        # 使用乐观锁更新库存和销量
+                        origin_stock = sku.stock
+                        origin_sales = sku.sales
+                        new_stock = origin_stock - sku.count
+                        new_sales = origin_sales + sku.count
+                        # 判断当前库存是否是查询时的库存, 不一致重新查询直到下单成功
+                        result = SKU.objects.filter(id=sku.id, stock=origin_stock).update(stock=new_stock,
+                                                                                          sales=new_sales)
+                        if result == 0:
+                            continue
+
+                        # 写入订单商品信息
+                        models.OrderGoods.objects.create(
+                            order=order,
+                            sku=sku,
+                            count=sku.count,
+                            price=sku.price,
+                        )
+                    # 写入完成退出查询
+                    break
 
                 # 补充订单信息数据
                 order.total_count = total_count
