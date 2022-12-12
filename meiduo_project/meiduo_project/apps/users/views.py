@@ -3,6 +3,7 @@ import logging
 import re
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
@@ -10,13 +11,14 @@ from django import http
 from django_redis import get_redis_connection
 from celery_tasks.send_email.tasks import send_verify_email
 # noinspection PyUnresolvedReferences
-from meiduo_project.utils.parameter import SETTING_TIME
+from utils.parameter import SETTING_TIME, PAGE
 # noinspection PyUnresolvedReferences
 from meiduo_project.utils.response_code import RETCODE
 from .models import User, Address
 from .utils import generate_verify_email_url, check_verify_email_token
 from goods.models import SKU
 from carts.utils import merge_cart_cookie_to_redis
+from orders import models
 
 logger = logging.getLogger('django')
 
@@ -26,8 +28,33 @@ class UserOrderInfoView(View):
 
     def get(self, request, page_num):
         """展示用户订单"""
+        user = request.user
+        # 查询订单
+        orders = user.orderinfo_set.all().order_by('-create_time')
 
-        pass
+        for order in orders:
+            # 订单支付方式
+            order.pay_method_text = models.OrderInfo.PAY_METHOD_CHOICES[order.pay_method - 1][1]
+            # 订单支付状态
+            order.status_text = models.OrderInfo.ORDER_STATUS_CHOICES[order.status - 1][1]
+            # 查询sku
+            order.order_skus = order.skus.all()
+
+        # 分页
+        page_num = int(page_num)
+        try:
+            paginator = Paginator(orders, PAGE.USER_CENTER_ORDERS_PAGE)
+            page_orders = paginator.page(page_num)
+            total_page = paginator.num_pages
+        except EmptyPage:
+            return http.HttpResponseNotFound('订单不存在')
+        # 渲染数据
+        context = {
+            'page_orders': page_orders,
+            'total_page': total_page,
+            'page_num': page_num,
+        }
+        return render(request, 'user_center_order.html', context)
 
 
 class UserBrowseHistory(View):

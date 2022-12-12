@@ -10,3 +10,7 @@ class SETTING_TIME:
 class SETTING_CODE:
     SMS_TEMPLATES = 1  # 短信验证码模板号码
     SMS_FLAG_SEND = 1  # 短信验证码已发送标识
+
+
+class PAGE:
+    USER_CENTER_ORDERS_PAGE = 5

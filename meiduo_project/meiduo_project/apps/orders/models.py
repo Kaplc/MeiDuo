@@ -61,6 +61,7 @@ class OrderGoods(BaseModel):
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, verbose_name="订单商品")
     count = models.IntegerField(default=1, verbose_name="数量")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="单价")
+    subtotal_price = models.DecimalField(default=0.00, max_digits=10, decimal_places=2, verbose_name="小计")
     comment = models.TextField(default="", verbose_name="评价信息")
     score = models.SmallIntegerField(choices=SCORE_CHOICES, default=5, verbose_name='满意度评分')
     is_anonymous = models.BooleanField(default=False, verbose_name='是否匿名评价')

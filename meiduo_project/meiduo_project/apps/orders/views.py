@@ -131,6 +131,7 @@ class OrderCommitView(LoginRequiredMixin, View):
                             sku=sku,
                             count=sku.count,
                             price=sku.price,
+                            subtotal_price=sku.subtotal_amount  # 商品小计
                         )
                     # 写入完成退出查询
                     break
