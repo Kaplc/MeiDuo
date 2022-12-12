@@ -33,7 +33,9 @@ urlpatterns = [
     # 设置地址标题
     re_path(r'addresses/(?P<address_id>\d+)/title/$', UpdateTitleAddressView.as_view()),
     # 修改密码
-    re_path(r'user_center_pass.html/$', ChangePasswordView.as_view(), name='pass'),
+    re_path(r'user_center_pass.html/$', ChangePasswordView.as_view(), name='modify_password'),
     # 用户浏览记录
-    re_path(r'browse_histories/$', UserBrowseHistory.as_view())
+    re_path(r'browse_histories/$', UserBrowseHistory.as_view()),
+    # 用户订单
+    re_path(r'orders/info/(?P<page_num>\d+)/$', UserOrderInfoView.as_view(), name='orders'),
 ]

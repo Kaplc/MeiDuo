@@ -17,7 +17,17 @@ from .models import User, Address
 from .utils import generate_verify_email_url, check_verify_email_token
 from goods.models import SKU
 from carts.utils import merge_cart_cookie_to_redis
+
 logger = logging.getLogger('django')
+
+
+class UserOrderInfoView(View):
+    """用户订单"""
+
+    def get(self, request, page_num):
+        """展示用户订单"""
+
+        pass
 
 
 class UserBrowseHistory(View):
