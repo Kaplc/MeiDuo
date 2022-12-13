@@ -4,7 +4,7 @@ let vm = new Vue({
     data: {
         username: getCookie('username'),
         order_submitting: false,
-        pay_method: false,
+        pay_method: 2,
         nowsite: '',
         payment_amount: '',
     },
