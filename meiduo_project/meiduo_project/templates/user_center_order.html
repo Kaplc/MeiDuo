@@ -84,7 +84,7 @@
                             </td>
                             <td width="15%">{{ page_order.total_amount }}元<br>含运费：{{ page_order.freight }}元</td>
                             <td width="15%">{{page_order.pay_method_text}}</td>
-                            <td width="15%"><a href="#" class="oper_btn">{{page_order.status_text}}</a></td>
+                            <td width="15%"><a href="{{url('payment:info', args=(page_order.order_id,))}}" class="oper_btn">{{page_order.status_text}}</a></td>
                         </tr>
                     </tbody>
                 </table>
