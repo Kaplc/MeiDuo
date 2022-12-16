@@ -19,6 +19,7 @@ from .utils import generate_verify_email_url, check_verify_email_token
 from goods.models import SKU
 from carts.utils import merge_cart_cookie_to_redis
 from orders import models
+from carts.utils import dict_to_cookie
 
 logger = logging.getLogger('django')
 
@@ -543,7 +544,10 @@ class LoginView(View):
             request.session.set_expiry(0)
             # 注册登录时把用户名写入cookie, 保存12小时
             response.set_cookie('username', user.username, max_age=3600 * 12)
-            pass
+
+        # 没有cookie购物车的写入空cookie购物车
+        if not request.COOKIES.get('carts'):
+            response.set_cookie('carts', dict_to_cookie({}))
         # 合并购物车
         response = merge_cart_cookie_to_redis(request, response)
         return response
@@ -667,8 +671,11 @@ class RegisterView(View):
         # 注册成功自动登入, 实现状态保持
         # login(请求, 存入数据库对象)
         login(request, user)
+
         # 响应注册结果: 重定向到首页
         response = redirect(reverse('contents:index'))
         # 注册登录时把用户名写入cookie
         response.set_cookie('username', user.username, max_age=3600 * 12)
+        # 写入空cookie购物车
+        response.set_cookie('carts', dict_to_cookie({}))
         return response

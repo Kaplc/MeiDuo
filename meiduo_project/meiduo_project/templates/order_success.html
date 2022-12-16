@@ -59,7 +59,7 @@
 	</div>
 	<div class="order_submit clearfix">
         {% if pay_method == '2' %}
-            <a href="{{ url('payment:info', args=(order_id,)) }}">确认支付</a>
+            <td width="15%"><a @click="order_payment" href="javascript:;" class="oper_btn">确认支付</a></td>
         {% else %}
             <a href="{{ url('contents:index') }}">继续购物</a>
         {% endif %}
