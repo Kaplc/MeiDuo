@@ -1,6 +1,6 @@
 import decimal
 import json
-from .utils import cookie_to_dict, dict_to_cookie, merge_cart_cookie_to_redis
+from .utils import cookie_to_dict, dict_to_cookie
 from django import http
 from django.shortcuts import render
 from django_redis import get_redis_connection

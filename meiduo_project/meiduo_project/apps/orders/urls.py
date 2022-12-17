@@ -8,5 +8,7 @@ urlpatterns = [
     # 保存订单信息
     re_path(r'orders/commit/$', OrderCommitView.as_view(), name='commit'),
     # 订单提交成功
-    re_path(r'orders/success/$', OrderSuccessView.as_view())
+    re_path(r'orders/success/$', OrderSuccessView.as_view()),
+    # 订单评价
+    re_path(r'orders/comment/$', OrderCommitView.as_view()),
 ]

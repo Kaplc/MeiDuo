@@ -17,6 +17,15 @@ import logging
 logger = logging.getLogger('django')
 
 
+class OrderCommentView(LoginRequiredMixin, View):
+    """订单商品评价"""
+
+    def get(self, request):
+        """展示商品评价页面"""
+
+        pass
+
+
 class OrderSuccessView(View):
     """订单提交成功"""
 
