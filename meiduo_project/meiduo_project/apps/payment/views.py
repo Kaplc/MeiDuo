@@ -1,5 +1,5 @@
 import os
-
+from .models import Payment
 from alipay import AliPay
 from django import http
 from django.shortcuts import render
@@ -17,8 +17,49 @@ class PaymentStatusView(View):
 
     def get(self, request):
         """获取支付信息"""
+        # 接收参数
+        query_dict = request.GET
+        data = query_dict.dict()  # query_dict转普通字典
+        signature = data.pop('sign')  # 参数字典消除sign数据
+        # 创建支付宝支付对象
+        alipay = AliPay(
+            appid=settings.ALIPAY_APPID,
+            app_notify_url=None,  # 默认返回url
+            app_private_key_string=open(
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'keys/app_private_key.pem')).read(),
+            alipay_public_key_string=open(
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'keys/alipay_public_key.pem')).read(),
+            sign_type='RSA2',
+            debug=settings.ALIPAY_DEBUG
+        )
+        # 校验支付宝参数
+        success = alipay.verify(data, signature)
+        if success:
+            # 读取order_id
+            order_id = data.get('out_trade_no')
+            # 支付宝流水号
+            trade_id = data.get('trade_no')
+            # 保存订单和支付订单数据
+            Payment.objects.create(
+                order_id=order_id,
+                trade_id=trade_id,
+            )
+            # 修改订单状态为待评价
+            try:
+                models.OrderInfo.objects.filter(order_id=order_id).update(status=models.OrderInfo.ORDER_STATUS_CHOICES[3][0])
+            except Exception as e:
+                logger.error(e)
+                return http.HttpResponseForbidden('订单保存失败')
 
-        pass
+            # jinja2渲染数据
+            context = {
+                'trade_id': trade_id
+            }
+            return render(request, 'pay_success.html', context)
+            pass
+        else:
+            return http.HttpResponseForbidden('参数错误')
+
 
 
 class PaymentView(View):
