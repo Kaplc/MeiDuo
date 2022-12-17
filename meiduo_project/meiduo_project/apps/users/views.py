@@ -24,7 +24,7 @@ from carts.utils import dict_to_cookie
 logger = logging.getLogger('django')
 
 
-class UserOrderInfoView(View):
+class UserOrderInfoView(LoginRequiredMixin, View):
     """用户订单"""
 
     def get(self, request, page_num):
@@ -545,9 +545,6 @@ class LoginView(View):
             # 注册登录时把用户名写入cookie, 保存12小时
             response.set_cookie('username', user.username, max_age=3600 * 12)
 
-        # 没有cookie购物车的写入空cookie购物车
-        if not request.COOKIES.get('carts'):
-            response.set_cookie('carts', dict_to_cookie({}))
         # 合并购物车
         response = merge_cart_cookie_to_redis(request, response)
         return response

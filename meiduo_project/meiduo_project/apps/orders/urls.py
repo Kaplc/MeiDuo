@@ -3,7 +3,7 @@ from .views import *
 app_name = 'orders'
 
 urlpatterns = [
-    # 订单
+    # 处理订单
     re_path(r'orders/settlement/$', OrderSettlementView.as_view(), name='info'),
     # 保存订单信息
     re_path(r'orders/commit/$', OrderCommitView.as_view(), name='commit'),

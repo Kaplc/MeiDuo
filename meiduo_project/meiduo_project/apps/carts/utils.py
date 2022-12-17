@@ -29,19 +29,23 @@ def dict_to_cookie(dict_data):
 def merge_cart_cookie_to_redis(request, response):
     """合并购物车"""
     user = request.user
-    cookie_carts = request.COOKIES.get('carts')
-    dict_carts = cookie_to_dict(cookie_carts)
+    if request.COOKIES.get('carts'):
 
-    conn_redis = get_redis_connection('carts')
+        cookie_carts = request.COOKIES.get('carts')
 
-    for cookie_sku_id in dict_carts:
-        count = dict_carts[cookie_sku_id]['count']
-        selected = dict_carts[cookie_sku_id]['selected']
-        # 覆盖(新增)redis的
-        conn_redis.hset('carts_%s' % user.id, cookie_sku_id, count)
-        # 添加勾选
-        if selected:
-            conn_redis.sadd('selected_%s' % user.id, cookie_sku_id)
+        dict_carts = cookie_to_dict(cookie_carts)
+
+        conn_redis = get_redis_connection('carts')
+
+        for cookie_sku_id in dict_carts:
+            count = dict_carts[cookie_sku_id]['count']
+            selected = dict_carts[cookie_sku_id]['selected']
+            # 覆盖(新增)redis的
+            conn_redis.hset('carts_%s' % user.id, cookie_sku_id, count)
+            # 添加勾选
+            if selected:
+                conn_redis.sadd('selected_%s' % user.id, cookie_sku_id)
+
     # 清空重置购物车为空字典
     response.set_cookie('carts', dict_to_cookie({}))
 
