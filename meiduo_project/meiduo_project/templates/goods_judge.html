@@ -51,13 +51,14 @@
 		</div>
 	</div>
 	<div class="judge_con">
-        {% for sku in skus %}
+
+
         <div class="judge_goods fl">
             <ul>
                 <li>
-                    <a href="{{url('goods:detail', args=(sku.id,))}}"><img src="{{ sku.default_image_url.url }}"></a>
-                    <h4><a href="{{url('goods:detail', args=(sku.id,))}}">{{sku.name}}</a></h4>
-                    <div class="price">￥{{ sku.price }}</div>
+                    <a href=""><img src=""></a>
+                    <h4><a href=""></a></h4>
+                    <div class="price">￥</div>
                 </li>
             </ul>
         </div>
@@ -78,11 +79,11 @@
                     <textarea class="judge_area"></textarea>
                 </div>
                 <div class="judge_item">
-                    <input type="input" value="提 交" class="judge_sub">
+                    <input @click="save_comment()" type="input" value="提 交" class="judge_sub">
                     <input type="checkbox" class="no_name"> 匿名评价
                 </div>
             </div>
-        {% endfor %}
+
 
 
     </div>
@@ -101,7 +102,7 @@
 	</div>
 	</div>
 	<script type="text/javascript">
-    	let skus = [];
+    	let skus = {{skus | safe}};
     </script>
     <script type="text/javascript" src="{{ static('js/common.js') }}"></script>
 	<script type="text/javascript" src="{{ static('js/goods_judge.js') }}"></script>

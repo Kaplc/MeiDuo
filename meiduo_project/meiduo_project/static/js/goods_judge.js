@@ -3,7 +3,7 @@ let vm = new Vue({
     delimiters: ['[[', ']]'],
     data: {
         username: getCookie('username'),
-        skus: []
+        skus: this.skus
     },
     mounted: function(){
         // 渲染评价界面

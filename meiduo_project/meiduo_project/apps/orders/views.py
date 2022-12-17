@@ -35,9 +35,19 @@ class OrderCommentView(LoginRequiredMixin, View):
         # 查找该订单的sku
         try:
             order_skus = order.skus.all()
+            # 构造数据列表
             skus = []
             for order_sku in order_skus:
-                skus.append(order_sku.sku)
+                skus.append({
+                    'order_id': order.order_id,
+                    'sku_id': order_sku.sku.id,
+                    'name': order_sku.sku.name,
+                    'price': str(order_sku.sku.price),
+                    'default_image_url': order_sku.sku.default_image_url.url,
+                    'comment': order_sku.comment,
+                    'score': order_sku.score,
+                    'is_anonymous': str(order_sku.is_anonymous),
+                })
         except Exception as e:
             logger.error(e)
             return http.HttpResponseServerError('查询失败')
