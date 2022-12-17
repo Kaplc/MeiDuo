@@ -84,7 +84,14 @@
                             </td>
                             <td width="15%">{{ page_order.total_amount }}元<br>含运费：{{ page_order.freight }}元</td>
                             <td width="15%">{{page_order.pay_method_text}}</td>
-                            <td width="15%"><a @click="oper_btn_click('{{ page_order.order_id }}', {% if page_order.status_text == '待支付' %}'1'{% else %}'0'{% endif %})" href="javascript:;" class="oper_btn">{{page_order.status_text}}</a></td>
+                            {% if page_order.status_text == '待支付' %}
+                                <td width="15%"><a @click="oper_btn_click('{{ page_order.order_id }}', '1')" href="javascript:;" class="oper_btn">{{page_order.status_text}}</a></td>
+                            {% elif page_order.status_text == '待评价' %}
+                                <td width="15%"><a @click="oper_btn_click('{{ page_order.order_id }}', '4')" href="javascript:;" class="oper_btn">{{page_order.status_text}}</a></td>
+                            {% else %}
+                                <td width="15%"><a @click="oper_btn_click('{{ page_order.order_id }}', '0')" href="javascript:;" class="oper_btn">{{page_order.status_text}}</a></td>
+                            {% endif %}
+
                         </tr>
                     </tbody>
                 </table>
