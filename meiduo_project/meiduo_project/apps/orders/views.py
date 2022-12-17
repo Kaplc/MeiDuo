@@ -14,6 +14,8 @@ from . import models
 import json
 import logging
 
+from .models import OrderInfo
+
 logger = logging.getLogger('django')
 
 
@@ -22,8 +24,29 @@ class OrderCommentView(LoginRequiredMixin, View):
 
     def get(self, request):
         """展示商品评价页面"""
+        # 接收参数
+        order_id = request.GET.get('order_id')
+        # 校验参数
+        try:
+            order = OrderInfo.objects.get(order_id=order_id, status=OrderInfo.ORDER_STATUS_ENUM['UNCOMMENT'])
+        except Exception as e:
+            logger.error(e)
+            return http.HttpResponseForbidden('参数错误')
+        # 查找该订单的sku
+        try:
+            order_skus = order.skus.all()
+            skus = []
+            for order_sku in order_skus:
+                skus.append(order_sku.sku)
+        except Exception as e:
+            logger.error(e)
+            return http.HttpResponseServerError('查询失败')
 
-        pass
+        # jinja2渲染
+        context = {
+            'skus': skus,
+        }
+        return render(request, 'goods_judge.html', context)
 
 
 class OrderSuccessView(View):
