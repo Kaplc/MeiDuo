@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'goods',  # 商品信息模块
     'haystack',  # 全文检索
     'orders',  # 订单
+    'payment',  # 支付
 ]
 
 MIDDLEWARE = [

@@ -11,7 +11,7 @@ from django import http
 from django_redis import get_redis_connection
 from celery_tasks.send_email.tasks import send_verify_email
 # noinspection PyUnresolvedReferences
-from utils.parameter import SETTING_TIME, PAGE
+from meiduo_project.utils.parameter import SETTING_TIME, PAGE
 # noinspection PyUnresolvedReferences
 from meiduo_project.utils.response_code import RETCODE
 from .models import User, Address

@@ -5,11 +5,20 @@ from django import http
 from django.shortcuts import render
 from django.views import View
 from orders import models
-from utils.response_code import *
+from meiduo_project.utils.response_code import *
 from django.conf import settings
 import logging
 
 logger = logging.getLogger('django')
+
+
+class PaymentStatusView(View):
+    """保存订单支付结果"""
+
+    def get(self, request):
+        """获取支付信息"""
+
+        pass
 
 
 class PaymentView(View):
