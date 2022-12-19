@@ -16,6 +16,15 @@ import logging
 logger = logging.getLogger('django')
 
 
+class GoodsCommentView(View):
+    """订单商品评价信息"""
+
+    def get(self, request, sku_id):
+        """获取商品评价数据"""
+
+        pass
+
+
 class DetailVisitView(View):
     """统计商品访问量"""
 
@@ -60,6 +69,7 @@ class DetailVisitView(View):
             return http.HttpResponseServerError('服务器错误')
 
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+
 
 class DetailView(View):
     """商品详情"""

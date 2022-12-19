@@ -50,15 +50,13 @@
 			</ul>
 		</div>
 	</div>
-	<div class="judge_con">
-
-
+	<div v-for="sku, index in skus" class="judge_con">
         <div class="judge_goods fl">
             <ul>
                 <li>
-                    <a href=""><img src=""></a>
-                    <h4><a href=""></a></h4>
-                    <div class="price">￥</div>
+                    <a :href="sku.detail_url"><img :src="sku.default_image_url"></a>
+                    <h4><a href="../detail/">[[sku.name]]</a></h4>
+                    <div class="price">￥[[sku.price]]</div>
                 </li>
             </ul>
         </div>
@@ -66,26 +64,23 @@
                 <div class="judge_item">
                     <label>商品满意度</label>
                     <div class="stars fl">
-                        <a href="javascript:;" class="star_off"></a>
-                        <a href="javascript:;" class="star_off"></a>
-                        <a href="javascript:;" class="star_off"></a>
-                        <a href="javascript:;" class="star_off"></a>
-                        <a href="javascript:;" class="star_off"></a>
+                        <a @click="on_stars_click(index, 1)" href="javascript:;" class="star_off"></a>
+                        <a @click="on_stars_click(index, 2)" href="javascript:;" class="star_off"></a>
+                        <a @click="on_stars_click(index, 3)" href="javascript:;" class="star_off"></a>
+                        <a @click="on_stars_click(index, 4)" href="javascript:;" class="star_off"></a>
+                        <a @click="on_stars_click(index, 5)" href="javascript:;" class="star_off"></a>
                     </div>
-                    <div class="score">0分</div>
+                    <div class="score">[[skus[index].final_score]]分</div>
                 </div>
                 <div class="judge_item">
                     <label>发表评价</label>
-                    <textarea class="judge_area"></textarea>
+                    <textarea v-model="skus[index].comment" class="judge_area"></textarea>
                 </div>
                 <div class="judge_item">
-                    <input @click="save_comment()" type="input" value="提 交" class="judge_sub">
+                    <input @click="save_comment(index)" type="input" value="提 交" class="judge_sub">
                     <input type="checkbox" class="no_name"> 匿名评价
                 </div>
             </div>
-
-
-
     </div>
 	<div class="footer">
 		<div class="foot_link">

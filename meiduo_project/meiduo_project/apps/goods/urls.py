@@ -12,4 +12,6 @@ urlpatterns = [
     re_path(r'detail/(?P<sku_id>\d+)/$', DetailView.as_view(), name='detail'),
     # 统计商品访问记录
     re_path(r'detail/visit/(?P<category_id>\d+)/$', DetailVisitView.as_view()),
+    # 获取评论信息
+    re_path(r'comments/(?P<sku_id>\d+)/$', GoodsCommentView.as_view())
 ]

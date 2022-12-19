@@ -3,7 +3,8 @@ let vm = new Vue({
     delimiters: ['[[', ']]'],
     data: {
         username: getCookie('username'),
-        skus: this.skus
+        skus: this.skus,
+
     },
     mounted: function(){
         // 渲染评价界面
@@ -35,10 +36,12 @@ let vm = new Vue({
         // 点击评分星星
         on_stars_click(index, score) {
             this.skus[index].final_score = score;
+
         },
         // 保存评价信息
         save_comment(index){
             let sku = this.skus[index];
+            let comment = this.comment
             if (sku.comment.length < 5){
                 alert('请填写多余5个字的评价内容');
             } else {
@@ -59,6 +62,10 @@ let vm = new Vue({
                         if (response.data.code == '0') {
                             // 删除评价后的商品
                             this.skus.splice(index, 1);
+                            if(!this.skus[0]){
+                                location.href = '/orders/info/1/'
+                            }
+
                         } else if (response.data.code == '4101') {
                             location.href = '/login/?next=/orders/comment/';
                         } else {

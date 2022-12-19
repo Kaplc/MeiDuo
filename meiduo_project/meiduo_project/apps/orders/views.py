@@ -1,4 +1,6 @@
 import decimal
+from utils.response_code import *
+from django.urls import reverse
 from meiduo_project.utils.response_code import *
 from django.utils import timezone
 from django.db import transaction
@@ -22,6 +24,54 @@ logger = logging.getLogger('django')
 class OrderCommentView(LoginRequiredMixin, View):
     """订单商品评价"""
 
+    def post(self, request):
+        """保存评价信息"""
+        # 获取参数
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        order_id = json_dict.get('order_id')
+        sku_id = json_dict.get('sku_id')
+        comment = json_dict.get('comment')
+        score = json_dict.get('score')
+        is_anonymous = json_dict.get('is_anonymous')
+        user = request.user
+        # 校验参数
+        if not all([order_id, comment, sku_id]):  # 校验完整性
+            return http.JsonResponse({'code': RETCODE.NECESSARYPARAMERR, 'errmsg': '参数不完整'})
+        try:
+            order = models.OrderInfo.objects.get(order_id=order_id, user=user)  # order_id
+            order_goods = order.skus.get(sku_id=sku_id)  # sku_id
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '订单号错误'})
+        if not 1 <= score <= 5:  # score
+            return http.JsonResponse({'code': RETCODE.PARAMERR, 'errmsg': '评分错误'})
+        if not isinstance(is_anonymous, bool):
+            return http.JsonResponse({'code': RETCODE.PARAMERR, 'errmsg': '匿名选择错误'})
+
+        try:
+            # 保存评论数据
+            order_goods.comment = comment
+            order_goods.score = score
+            order_goods.is_anonymous = is_anonymous
+            order_goods.is_commented = True
+            order_goods.save()
+            # 累计评论数据
+            order_goods.sku.comments += 1
+            order_goods.sku.save()
+            order_goods.sku.spu.comments += 1
+            order_goods.sku.spu.save()
+            # 修改订单状态
+            if not order.skus.filter(is_commented=False):
+                order.status = models.OrderInfo.ORDER_STATUS_ENUM['FINISHED']
+                order.save()
+
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '评论保存失败'})
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '保存成功'})
+
     def get(self, request):
         """展示商品评价页面"""
         # 接收参数
@@ -31,16 +81,17 @@ class OrderCommentView(LoginRequiredMixin, View):
             order = OrderInfo.objects.get(order_id=order_id, status=OrderInfo.ORDER_STATUS_ENUM['UNCOMMENT'])
         except Exception as e:
             logger.error(e)
-            return http.HttpResponseForbidden('参数错误')
+            return http.JsonResponse({'code': RETCODE.PARAMERR, 'errmsg': '参数错误'})
         # 查找该订单的sku
         try:
-            order_skus = order.skus.all()
+            order_skus = order.skus.filter(is_commented=False)
             # 构造数据列表
             skus = []
             for order_sku in order_skus:
                 skus.append({
                     'order_id': order.order_id,
                     'sku_id': order_sku.sku.id,
+                    'detail_url': reverse('goods:detail', args=(order_sku.sku.id,)),
                     'name': order_sku.sku.name,
                     'price': str(order_sku.sku.price),
                     'default_image_url': order_sku.sku.default_image_url.url,
