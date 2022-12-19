@@ -22,6 +22,7 @@ class GoodsCommentView(View):
     def get(self, request, sku_id):
         """获取商品评价数据"""
 
+
         pass
 
 
