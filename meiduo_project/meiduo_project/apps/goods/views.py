@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views import View
 from .contents import *
 from goods.models import GoodsCategory, SKU, GoodsVisitCount
-from meiduo_project.utils.response_code import RETCODE
+from utils.response_code import RETCODE
 from .utils import get_categories, get_breadcrumb
 import logging
 
@@ -22,8 +22,31 @@ class GoodsCommentView(View):
     def get(self, request, sku_id):
         """获取商品评价数据"""
 
+        try:
+            # 校验参数
+            sku = SKU.objects.get(id=sku_id)
+            # 构造评论列表
+            comment_list = []
+            # 查询评论
+            order_goods = sku.ordergoods_set.all()
+            for order_good in order_goods:
+                comment_list.append({
+                    'username': order_good.order.user.username,
+                    'comment': order_good.comment,
+                    'score': order_good.score
+                })
+            pass
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': 'sku_id错误'})
 
-        pass
+        # 构造json数据
+        json_data ={
+            'code': RETCODE.OK,
+            'errmsg': 'OK',
+            'comment_list': comment_list
+        }
+        return http.JsonResponse(json_data)
 
 
 class DetailVisitView(View):
@@ -231,9 +254,5 @@ class ListView(View):
             'category_id': category_id,  # 当前商品类别id
             'category': category,  # 当前商品类别
         }
-        for tsku in sku_page:
-            id = tsku.id
-            url = tsku.default_image_url.url
-            name = tsku.name
-            pass
+
         return render(request, 'list.html', context)
