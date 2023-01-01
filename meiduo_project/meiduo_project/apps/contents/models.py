@@ -1,5 +1,5 @@
 from django.db import models
-from meiduo_project.utils.models import BaseModel
+from utils.models import BaseModel
 
 
 # Create your models here.
