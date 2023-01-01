@@ -35,7 +35,5 @@ class IndexView(View):
             'contents': contents,
         }
         response = render(request, 'index.html', context)
-        # 没有购物车cookie则创建
-        if not request.COOKIES.get('carts'):
-            response.set_cookie('carts', dict_to_cookie({}))
+
         return response

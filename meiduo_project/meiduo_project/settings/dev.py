@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_crontab',  # 定时任务
+
     # 使用追加的BASE_DIR注册user子应用
 
     'users',  # 用户模块
@@ -336,3 +339,11 @@ ALIPAY_APPID = '2021000122603082'
 ALIPAY_DEBUG = True
 ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
 ALIPAY_RETURN_URL = 'http://pdd42.bolinkang.cn:8081/payment/status/'
+
+# --------------------------定时任务--------------------------- #
+CRONJOBS = [
+    # 每1分钟生成一次首页静态文件
+    ('*/1 * * * *', 'contents.crons.generate_static_index_html'),
+
+]
+CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'

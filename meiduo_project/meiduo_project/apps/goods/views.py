@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views import View
 from .contents import *
 from goods.models import GoodsCategory, SKU, GoodsVisitCount
-from utils.response_code import RETCODE
+from meiduo_project.utils.response_code import RETCODE
 from .utils import get_categories, get_breadcrumb
 import logging
 

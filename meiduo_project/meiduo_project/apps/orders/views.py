@@ -1,5 +1,5 @@
 import decimal
-from utils.response_code import *
+from meiduo_project.utils.response_code import *
 from django.urls import reverse
 from meiduo_project.utils.response_code import *
 from django.utils import timezone
