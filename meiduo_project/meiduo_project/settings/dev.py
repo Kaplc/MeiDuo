@@ -128,8 +128,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',  # 数据库引擎
         'HOST': '127.0.0.1',  # 数据库主机
         'PORT': 3306,  # 数据库端口
-        'USER': 'zzy',  # 数据库用户名
-        'PASSWORD': '111111',  # 数据库用户密码
+        'USER': 'root',  # 数据库用户名
+        'PASSWORD': '123456',  # 数据库用户密码
         'NAME': 'meiduo',  # 数据库名字
 
     },
@@ -315,7 +315,7 @@ EMAIL_VERIFY_URL = 'http:///pdd42.bolinkang.cn:8081/emails/verification/'
 # 指定自定义的Django文件存储类
 DEFAULT_FILE_STORAGE = 'meiduo_project.utils.fastdfs.fdfs_storage.FastDFSStorage'
 # FastDFS相关参数
-FDFS_BASE_URL = 'https://611a78647w.oicp.vip/'
+FDFS_BASE_URL = 'http://192.168.43.14122122/'
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 
 # --------------------------haystack--------------------------- #
