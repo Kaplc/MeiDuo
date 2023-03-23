@@ -39,6 +39,9 @@ class CartsSimpleView(View):
         else:
             # 未登录查询cookie
             cookie_carts = request.COOKIES.get('carts')
+            if cookie_carts is None:
+                return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '查询失败'})
+
             carts_dict = cookie_to_dict(cookie_carts)
 
         # 查询sku集合

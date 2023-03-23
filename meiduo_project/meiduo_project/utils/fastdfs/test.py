@@ -1,6 +1,8 @@
 
-from fdfs_client.client import Fdfs_client
+from fdfs_client.client import Fdfs_client, get_tracker_conf
 
-client = Fdfs_client(r'G:\project\MeiDuo\meiduo_project\meiduo_project\utils\fastdfs\client.conf')
-ret = client.upload_by_filename(r'G:\project\MeiDuo\meiduo_project\meiduo_project\static\favicon.ico')
+track_config = get_tracker_conf('/home/kaplc/PycharmProjects/MeiDuo/meiduo_project/meiduo_project/utils/fastdfs/client.conf')
+
+client = Fdfs_client(track_config)
+ret = client.upload_by_filename('/home/kaplc/PycharmProjects/MeiDuo/meiduo_project/meiduo_project/static/favicon.ico')
 print(ret)

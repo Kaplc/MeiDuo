@@ -36,4 +36,9 @@ class IndexView(View):
         }
         response = render(request, 'index.html', context)
 
+        # 判断cookie购物车是否存在
+        # cookie_cart = request.COOKIE.get('cart')
+        # if cookie_cart is None:
+        #     # 写入空cookie购物车
+        #     response.set_cookie('carts', dict_to_cookie({}))
         return response

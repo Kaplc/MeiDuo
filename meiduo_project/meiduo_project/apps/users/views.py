@@ -673,6 +673,6 @@ class RegisterView(View):
         response = redirect(reverse('contents:index'))
         # 注册登录时把用户名写入cookie
         response.set_cookie('username', user.username, max_age=3600 * 12)
-        # 写入空cookie购物车
-        response.set_cookie('carts', dict_to_cookie({}))
+        # # 写入空cookie购物车
+        # response.set_cookie('carts', dict_to_cookie({}))
         return response
