@@ -59,13 +59,17 @@ INSTALLED_APPS = [
     'haystack',  # 全文检索
     'orders',  # 订单
     'payment',  # 支付
+    'corsheaders',  # 跨域解决
+    'meiduo_admin',  # 美多后台
 ]
 
 MIDDLEWARE = [
+
+    'corsheaders.middleware.CorsMiddleware',  # 跨域解决
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -347,3 +351,11 @@ CRONJOBS = [
 
 ]
 CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+
+# -------------------------跨域设置---------------
+# CORS
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:7777',
+
+)
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
