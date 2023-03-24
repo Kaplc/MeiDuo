@@ -38,5 +38,7 @@ urlpatterns = [
     # orders
     re_path(r'^', include('orders.urls', namespace='orders')),
     # payment
-    re_path(r'^', include('payment.urls', namespace='payment'))
+    re_path(r'^', include('payment.urls', namespace='payment')),
+    # meiduo_admin
+    re_path(r'^', include('meiduo_admin.urls', namespace='meiduo_admin'))
 ]
