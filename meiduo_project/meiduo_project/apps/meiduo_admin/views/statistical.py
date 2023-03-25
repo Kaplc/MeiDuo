@@ -30,3 +30,27 @@ class UserTotalCountView(APIView):
             'count': count,
             'date': now_day
         })
+
+
+class UserDayCountView(APIView):
+    """日增用户统计"""
+    # drf权限认证
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        # 获取当前日期
+        now_day = date.today()
+
+        try:
+            # __gte大于等于
+            count = User.objects.filter(date_joined__gte=now_day, is_staff=False).count()
+        except Exception as e:
+            logger.error(e)
+            count = None
+
+        return Response({
+            "count": count,
+            "date": now_day
+        })
+
+
