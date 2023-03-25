@@ -19,7 +19,7 @@ from .utils import generate_verify_email_url, check_verify_email_token
 from goods.models import SKU
 from carts.utils import merge_cart_cookie_to_redis
 from orders import models
-from carts.utils import dict_to_cookie
+
 
 logger = logging.getLogger('django')
 
@@ -506,7 +506,6 @@ class LoginView(View):
         if not (all([username, password])):  # 判断参数完整
             return http.HttpResponseForbidden('参数错误')
         # 校验用户名
-
         if not re.match(r'^[a-zA-Z0-9]{5,20}$', username):
             return render(request, 'login.html', {'account_errmsg': '用户名或密码错误, 请重试'})
             # return http.HttpResponseForbidden('用户名或密码格式错误')
@@ -518,7 +517,7 @@ class LoginView(View):
             return render(request, 'login.html', {'account_errmsg': '用户名或密码错误, 请重试'})
             # return http.HttpResponseForbidden('用户名或密码格式错误')
         # 认证登录用户
-        user = authenticate(username=username, password=password)
+        user = authenticate(request=request, username=username, password=password)
         if user is None:
             return render(request, 'login.html', {'account_errmsg': '用户名或密码错误, 请重试'})
         # 状态保持
