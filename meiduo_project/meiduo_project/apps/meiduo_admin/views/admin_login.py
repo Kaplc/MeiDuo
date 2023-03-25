@@ -10,6 +10,7 @@ class AdminLogin(View):
     def get(self, request):
         return render(request, 'admin_login.html')
 
-    def post(self, request):
-        user = authenticate(username=username, password=password)
-        return http.JsonResponse({'code': 'OK'})
+    # def post(self, request):
+    #     username = request.POST.get('username')
+    #     user = authenticate(username=username, password=password)
+    #     return http.JsonResponse({'code': 'OK'})
