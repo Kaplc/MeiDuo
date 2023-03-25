@@ -78,8 +78,17 @@ class UsernameMobileAuthBacken(ModelBackend):
         :param kwargs: 其他参数
         :return:
         """
-        user = get_user_by_account(username)
-        if user and user.check_password(password):
-            return user
+        if request is None:
+            # 查询用户名和身份
+            user = User.objects.get(username=username, is_staff=True)
+            if user and user.check_password(password):
+                return user
+            else:
+                return None
+
         else:
-            return None
+            user = get_user_by_account(username)
+            if user and user.check_password(password):
+                return user
+            else:
+                return None

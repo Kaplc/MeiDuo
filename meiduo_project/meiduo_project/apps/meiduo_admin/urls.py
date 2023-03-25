@@ -10,4 +10,8 @@ urlpatterns = [
     re_path(r'madmin/$', AdminLogin.as_view()),
     # 使用jwt认证后端
     re_path(r'meiduo_admin/authorizations/$', obtain_jwt_token),
+    # ---------------------数据统计------------------- #
+    # 用户总数
+    re_path(r'meiduo_admin/statistical/total_count/$', obtain_jwt_token),
+
 ]
