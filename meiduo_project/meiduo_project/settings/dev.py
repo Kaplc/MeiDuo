@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import datetime
 import os
 import sys
 from pathlib import Path
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     'haystack',  # 全文检索
     'orders',  # 订单
     'payment',  # 支付
+    'rest_framework',  # DRF
     'corsheaders',  # 跨域解决
     'meiduo_admin',  # 美多后台
 ]
@@ -352,10 +354,26 @@ CRONJOBS = [
 ]
 CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
 
-# -------------------------跨域设置---------------
+# -------------------跨域设置---------------
 # CORS
 CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:7777',
 
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+
+# ---------------------DRF------------------- #
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    # 过期认证时间
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    # 指定重写jwt返回
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'meiduo_project.apps.meiduo_admin.utils.jwt_response_payload_handler',
+}
