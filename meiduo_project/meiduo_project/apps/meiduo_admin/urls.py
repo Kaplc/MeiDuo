@@ -1,7 +1,7 @@
 from django.urls import re_path
 from .views.admin_login import AdminLogin
 from rest_framework_jwt.views import obtain_jwt_token
-
+from .views import statistical
 
 app_name = 'meiduo_admin'
 
@@ -12,6 +12,6 @@ urlpatterns = [
     re_path(r'meiduo_admin/authorizations/$', obtain_jwt_token),
     # ---------------------数据统计------------------- #
     # 用户总数
-    re_path(r'meiduo_admin/statistical/total_count/$', obtain_jwt_token),
+    re_path(r'meiduo_admin/statistical/total_count/$', statistical.UserTotalCountView.as_view()),
 
 ]
