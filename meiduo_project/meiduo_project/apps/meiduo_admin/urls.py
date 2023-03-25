@@ -16,8 +16,8 @@ urlpatterns = [
     re_path(r'meiduo_admin/statistical/day_active/$', statistical.UserActiveCountView.as_view()),
     # 日下单用户
     re_path(r'meiduo_admin/statistical/day_orders/$', statistical.UserOrderCountView.as_view()),
-
-    re_path(r'meiduo_admin/statistical/day_increment/$', statistical.UserOrderCountView.as_view()),
+    # 月活跃用户
+    re_path(r'meiduo_admin/statistical/month_increment/$', statistical.UserMonthCountView.as_view()),
 
 
 
