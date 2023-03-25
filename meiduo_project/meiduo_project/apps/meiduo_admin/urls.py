@@ -12,7 +12,12 @@ urlpatterns = [
     re_path(r'meiduo_admin/statistical/total_count/$', statistical.UserTotalCountView.as_view()),
     # 日注册用户
     re_path(r'meiduo_admin/statistical/day_increment/$', statistical.UserDayCountView.as_view()),
+    # 日活跃用户
+    re_path(r'meiduo_admin/statistical/day_active/$', statistical.UserActiveCountView.as_view()),
+    # 日下单用户
+    re_path(r'meiduo_admin/statistical/day_orders/$', statistical.UserDayCountView.as_view()),
 
+    re_path(r'meiduo_admin/statistical/day_increment/$', statistical.UserDayCountView.as_view()),
 
 
 

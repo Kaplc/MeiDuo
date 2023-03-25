@@ -54,3 +54,23 @@ class UserDayCountView(APIView):
         })
 
 
+class UserActiveCountView(APIView):
+    """日活跃用户"""
+    # 指定管理员权限
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        # 获取当前日期
+        now_day = date.today()
+
+        try:
+            # __gte大于等于
+            count = User.objects.filter(last_login__gte=now_day, is_staff=False).count()
+        except Exception as e:
+            logger.error(e)
+            count = None
+
+        return Response({
+            "count": count,
+            "date": now_day
+        })
