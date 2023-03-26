@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'www.meiduo.site',
     '611a78647w.oicp.vip',
+    '192.168.123.89'
 ]
 
 # Application definition
