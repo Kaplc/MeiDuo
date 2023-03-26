@@ -1,11 +1,15 @@
 import logging
+
+from django.utils import timezone
+
 from orders.models import OrderInfo
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser
 from datetime import date, timedelta
-
+from goods.models import GoodsVisitCount
 from users.models import User
+from meiduo_admin.serializer.goods_serializer import GoodsSerializer
 
 logger = logging.getLogger('django')
 
@@ -18,7 +22,7 @@ class UserTotalCountView(APIView):
     def get(self, request):
 
         # 获取当前日期
-        now_day = date.today()
+        now_day = timezone.now().date()
 
         try:
             count = User.objects.all().count()
@@ -39,7 +43,7 @@ class UserDayCountView(APIView):
 
     def get(self, request):
         # 获取当前日期
-        now_day = date.today()
+        now_day = timezone.now().date()
 
         try:
             # __gte大于等于
@@ -61,7 +65,7 @@ class UserActiveCountView(APIView):
 
     def get(self, request):
         # 获取当前日期
-        now_day = date.today()
+        now_day = timezone.now().date()
 
         try:
             # __gte大于等于
@@ -82,7 +86,7 @@ class UserOrderCountView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
-        now_day = date.today()
+        now_day = timezone.now().date()
         try:
             # __gte大于等于
             count = OrderInfo.objects.filter(create_time__gte=now_day).count()
@@ -102,7 +106,7 @@ class UserMonthCountView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
-        now_day = date.today()
+        now_day = timezone.now().date()
         start_date = now_day - timedelta(29)
         # 创建日用户列表
         date_list = []
@@ -122,3 +126,18 @@ class UserMonthCountView(APIView):
             logger.error(e)
 
         return Response(date_list)
+
+
+class GoodsDayView(APIView):
+    """日分类商品访问量"""
+
+    def get(self, request):
+        # 获取当天日期
+        now_date = timezone.now().date()
+
+        data = GoodsVisitCount.objects.filter(date=now_date)
+
+        # many=True序列化多个对象
+        ser = GoodsSerializer(data, many=True)
+
+        return Response(ser.data)

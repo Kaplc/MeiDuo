@@ -1,11 +1,11 @@
 import copy
 import json
-
 from django import http
 from django.core.paginator import Paginator
 from django.db.models.functions import datetime
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from django.views import View
 from .contents import *
 from goods.models import GoodsCategory, SKU, GoodsVisitCount
@@ -68,7 +68,7 @@ class DetailVisitView(View):
             return http.HttpResponseForbidden('缺少必传参数')
 
         # 获取日期
-        time = timezone.localtime()
+        time = timezone.now()
         # 日期字符串
         time_str = '%d-%02d-%02d' % (time.year, time.month, time.day)
         # 转datetime类型的日期对象

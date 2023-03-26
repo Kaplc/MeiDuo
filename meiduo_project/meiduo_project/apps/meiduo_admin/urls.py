@@ -18,6 +18,8 @@ urlpatterns = [
     re_path(r'meiduo_admin/statistical/day_orders/$', statistical.UserOrderCountView.as_view()),
     # 月活跃用户
     re_path(r'meiduo_admin/statistical/month_increment/$', statistical.UserMonthCountView.as_view()),
+    # 日分类商品访问量
+    re_path(r'meiduo_admin/statistical/goods_day_views/$', statistical.GoodsDayView.as_view()),
 
 
 
