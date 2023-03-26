@@ -1,6 +1,7 @@
 from django.urls import re_path
 from rest_framework_jwt.views import obtain_jwt_token
 from .views import statistical
+from .views import users
 
 app_name = 'meiduo_admin'
 
@@ -20,7 +21,9 @@ urlpatterns = [
     re_path(r'meiduo_admin/statistical/month_increment/$', statistical.UserMonthCountView.as_view()),
     # 日分类商品访问量
     re_path(r'meiduo_admin/statistical/goods_day_views/$', statistical.GoodsDayView.as_view()),
-
+    # --------------------用户---------------------- #
+    # 查询用户
+    re_path(r'meiduo_admin/users/$', users.UserView.as_view()),
 
 
 ]
