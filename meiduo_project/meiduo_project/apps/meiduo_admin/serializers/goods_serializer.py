@@ -12,3 +12,8 @@ class GoodsSerializer(serializers.ModelSerializer):
         model = GoodsVisitCount
         # 指定返回字段
         fields = ('count', 'category')
+        
+        
+
+
+

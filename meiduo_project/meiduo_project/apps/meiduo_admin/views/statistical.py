@@ -1,7 +1,5 @@
 import logging
-
 from django.utils import timezone
-
 from orders.models import OrderInfo
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,7 +7,7 @@ from rest_framework.permissions import IsAdminUser
 from datetime import date, timedelta
 from goods.models import GoodsVisitCount
 from users.models import User
-from meiduo_admin.serializer.goods_serializer import GoodsSerializer
+from meiduo_admin.serializers.goods_serializer import GoodsSerializer
 
 logger = logging.getLogger('django')
 
