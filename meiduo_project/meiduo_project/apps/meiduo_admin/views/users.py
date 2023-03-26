@@ -1,15 +1,22 @@
-from rest_framework.generics import ListAPIView
-from meiduo_admin.serializers.user_serializer import UserSerializer
+from rest_framework.generics import ListAPIView, ListCreateAPIView
+from meiduo_admin.serializers.user_serializer import UserSerializer, UserAddSerializer
 from meiduo_admin.utils import PageNum
 from users.models import User
 
 
 # ListAPIView继承GenericAPIView、ListModelMixin
-class UserView(ListAPIView):
-    # 指定使用的序列化器
-    serializer_class = UserSerializer
+class UserView(ListCreateAPIView):
     # 指定分页器
     pagination_class = PageNum
+
+    # 序列化器选择方法
+    def get_serializer_class(self):
+
+        if self.request.method == 'GET':
+            return UserSerializer
+        else:
+            # POST
+            return UserAddSerializer
 
     # 重写获取查询集方法
     def get_queryset(self):
@@ -23,5 +30,3 @@ class UserView(ListAPIView):
         else:
             queryset = User.objects.filter(username=keyword).order_by('username')
             return queryset
-
-

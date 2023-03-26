@@ -22,8 +22,7 @@ urlpatterns = [
     # 日分类商品访问量
     re_path(r'meiduo_admin/statistical/goods_day_views/$', statistical.GoodsDayView.as_view()),
     # --------------------用户---------------------- #
-    # 查询用户
+    # 查询，添加用户
     re_path(r'meiduo_admin/users/$', users.UserView.as_view()),
-
 
 ]
