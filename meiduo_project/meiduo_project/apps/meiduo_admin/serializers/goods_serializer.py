@@ -34,4 +34,4 @@ class ImageSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SKU
-        fields = ('name',)
+        fields = ('id', 'name',)

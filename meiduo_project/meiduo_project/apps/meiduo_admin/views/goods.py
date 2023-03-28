@@ -1,3 +1,4 @@
+from fdfs_client.client import Fdfs_client
 from rest_framework.viewsets import ModelViewSet
 from goods.models import SPUSpecification, SPU, SKUImage, SKU
 from meiduo_admin.utils import PageNum
@@ -34,3 +35,21 @@ class ImageView(ModelViewSet):
         ser = goods_serializer.ImageSimpleSerializer(data, many=True)
 
         return Response(ser.data)
+
+    def create(self, request, *args, **kwargs):
+        image = request.FILES.get('image')
+        sku_id = request.data.get('sku')
+        # 上传到fdfs
+        fdfs = Fdfs_client('meiduo_project/utils/fastdfs/client.conf')
+        ret = fdfs.upload_by_buffer(image.read())
+        if ret['Status'] == 'Upload successed.':
+            image_url = ret['Remote file_id']
+            sku_image = SKUImage.objects.create(image=image_url, sku_id=sku_id)
+            sku_image.save()
+            return Response({
+                "id": sku_image.id,
+                "sku": sku_image.sku_id,
+                "image": sku_image.image.name
+            })
+        else:
+            return Response(status=500)
