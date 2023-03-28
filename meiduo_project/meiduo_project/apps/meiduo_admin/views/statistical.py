@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAdminUser
 from datetime import date, timedelta
 from goods.models import GoodsVisitCount
 from users.models import User
-from meiduo_admin.serializers.goods_serializer import GoodsSerializer
+from meiduo_admin.serializers.statistical_serializer import GoodsSerializer
 
 logger = logging.getLogger('django')
 

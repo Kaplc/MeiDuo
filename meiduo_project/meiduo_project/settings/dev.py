@@ -35,7 +35,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'www.meiduo.site',
     '611a78647w.oicp.vip',
-    '192.168.123.89'
+    '192.168.123.203'
 ]
 
 # Application definition
@@ -322,7 +322,7 @@ EMAIL_VERIFY_URL = 'http:///pdd42.bolinkang.cn:8081/emails/verification/'
 # 指定自定义的Django文件存储类
 DEFAULT_FILE_STORAGE = 'meiduo_project.utils.fastdfs.fdfs_storage.FastDFSStorage'
 # FastDFS相关参数
-FDFS_BASE_URL = 'http://192.168.43.14122122/'
+FDFS_BASE_URL = 'http://192.168.43.141:8888/'
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 
 # --------------------------haystack--------------------------- #

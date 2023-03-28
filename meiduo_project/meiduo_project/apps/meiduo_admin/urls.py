@@ -1,7 +1,7 @@
 from django.urls import re_path
+from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
-from .views import statistical
-from .views import users
+from .views import statistical, users, goods
 
 app_name = 'meiduo_admin'
 
@@ -24,5 +24,18 @@ urlpatterns = [
     # --------------------用户---------------------- #
     # 查询，添加用户
     re_path(r'meiduo_admin/users/$', users.UserView.as_view()),
-
+    # ---------------------商品管理--------------------- #
+    # spu规格simple
+    re_path(r'meiduo_admin/goods/simple/$', goods.SpecsView.as_view({'get': 'simple'})),
+    # sku图片simple
+    re_path(r'meiduo_admin/skus/simple/$', goods.ImageView.as_view({'get': 'simple'})),
 ]
+# -------------------自动生成路由----------------------- #
+# spu规格
+router = DefaultRouter()
+router.register('meiduo_admin/goods/specs', goods.SpecsView, basename='specs')
+urlpatterns += router.urls
+# SKU图片
+router = DefaultRouter()
+router.register('meiduo_admin/skus/images', goods.ImageView, basename='images')
+urlpatterns += router.urls

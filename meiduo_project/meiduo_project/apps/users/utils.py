@@ -80,7 +80,12 @@ class UsernameMobileAuthBacken(ModelBackend):
         """
         if request is None:
             # 查询用户名和身份
-            user = User.objects.get(username=username, is_staff=True)
+            try:
+                user = User.objects.get(username=username, is_staff=True)
+            except Exception as e:
+                logger.error(e)
+                user = None
+
             if user and user.check_password(password):
                 return user
             else:
