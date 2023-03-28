@@ -1,6 +1,7 @@
 import copy
 import json
 from django import http
+from meiduo_project.settings.dev import FDFS_BASE_URL
 from django.core.paginator import Paginator
 from django.db.models.functions import datetime
 from django.shortcuts import render
@@ -162,6 +163,7 @@ class DetailView(View):
             'sku': sku,
             'specs': goods_specs,
             'sku_options': sku_options_list,
+            'fdfs_url': FDFS_BASE_URL,
         }
 
         return render(request, 'detail.html', context)
