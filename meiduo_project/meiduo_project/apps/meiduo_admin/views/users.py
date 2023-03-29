@@ -1,4 +1,6 @@
 from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.permissions import IsAdminUser
+
 from meiduo_admin.serializers.user_serializer import UserSerializer, UserAddSerializer
 from meiduo_admin.utils import PageNum
 from users.models import User
@@ -8,7 +10,7 @@ from users.models import User
 class UserView(ListCreateAPIView):
     # 指定分页器
     pagination_class = PageNum
-
+    permission_classes = [IsAdminUser]
     # 序列化器选择方法
     def get_serializer_class(self):
 

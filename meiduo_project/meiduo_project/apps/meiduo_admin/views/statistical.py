@@ -128,6 +128,7 @@ class UserMonthCountView(APIView):
 
 class GoodsDayView(APIView):
     """日分类商品访问量"""
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         # 获取当天日期
