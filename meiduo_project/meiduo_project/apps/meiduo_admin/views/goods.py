@@ -20,7 +20,7 @@ class CategoriesView(ModelViewSet):
 
 
 class SKUView(ModelViewSet):
-    """sku"""
+    """sku管理"""
     queryset = SKU.objects.all().order_by('id')
     # 指定序列化器
     serializer_class = goods_serializer.SKUSerializer
@@ -30,7 +30,7 @@ class SKUView(ModelViewSet):
 
 # 增删改查使用视图集
 class SpecsView(ModelViewSet):
-    """spu规格"""
+    """spu规格管理"""
     queryset = SPUSpecification.objects.all().order_by('id')
     # 指定序列化器
     serializer_class = goods_serializer.SPUSpecificationSerializer
@@ -46,7 +46,7 @@ class SpecsView(ModelViewSet):
 
 
 class ImageView(ModelViewSet):
-    """商品图片"""
+    """商品图片管理"""
     queryset = SKUImage.objects.all().order_by('sku')
     serializer_class = goods_serializer.ImageSerializer
     pagination_class = PageNum
