@@ -324,6 +324,7 @@ DEFAULT_FILE_STORAGE = 'meiduo_project.utils.fastdfs.fdfs_storage.FastDFSStorage
 # FastDFS相关参数
 FDFS_BASE_URL = 'http://192.168.43.141:8888/'
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+FDFS_CONF_DIR = '/home/kaplc/PycharmProjects/MeiDuo/meiduo_project/meiduo_project/utils/fastdfs/client.conf'
 
 # --------------------------haystack--------------------------- #
 # Haystack
