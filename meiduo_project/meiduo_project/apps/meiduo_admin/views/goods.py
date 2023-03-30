@@ -1,4 +1,5 @@
 from fdfs_client.client import Fdfs_client
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 from goods.models import SPUSpecification, SPU, SKUImage, SKU, GoodsCategory
@@ -9,6 +10,17 @@ from django.db.models import Count
 import logging
 
 logger = logging.getLogger('django')
+
+
+class SPUSpecView(ListAPIView):
+    serializer_class = goods_serializer.PKSPUSpecificationSerializer
+
+    # 因为我们继承的是ListAPIView，在拓展类中是通过get_queryset获取数据，但是我们现在要获取的是规格信息，所以重写get_queryset
+    def get_queryset(self):
+        # 获取spuid值
+        pk = self.kwargs['pk']
+        # 根据spu的id值关联过滤查询出规格信息
+        return SPUSpecification.objects.filter(spu_id=self.kwargs['pk'])
 
 
 class CategoriesView(ModelViewSet):
@@ -56,6 +68,6 @@ class ImageView(ModelViewSet):
         """自定义返回方法"""
         # 返回SKU信息
         data = SKU.objects.all()
-        ser = goods_serializer.SKUSimpleSerializer(data, many=True)
+        ser = goods_serializer.ImageToSKUSimpleSerializer(data, many=True)
 
         return Response(ser.data)
