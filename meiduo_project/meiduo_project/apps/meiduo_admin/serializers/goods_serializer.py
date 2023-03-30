@@ -1,7 +1,8 @@
 from django.db import transaction
 from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
-from goods.models import SPUSpecification, SKUImage, SKU, GoodsCategory, SKUSpecification, SpecificationOption, SPU
+from goods.models import SPUSpecification, SKUImage, SKU, GoodsCategory, SKUSpecification, SpecificationOption\
+    , SPU, Brand
 from celery_tasks.generate_static.tasks import detail_page
 from django.conf import settings
 
@@ -189,6 +190,7 @@ class PKSPUSpecificationSerializer(serializers.ModelSerializer):
 
 
 class SPUSerializer(serializers.ModelSerializer):
+    """SPU信息"""
     brand = serializers.StringRelatedField()
     brand_id = serializers.IntegerField()
     category1_id = serializers.IntegerField()
@@ -200,3 +202,11 @@ class SPUSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'brand', 'brand_id', 'category1_id',
             'category2_id', 'category3_id', 'sales', 'comments')
+
+
+class BrandsSimpleSerializer(serializers.ModelSerializer):
+    """添加spu信息简单展示Brands"""
+
+    class Meta:
+        model = Brand
+        fields = '__all__'

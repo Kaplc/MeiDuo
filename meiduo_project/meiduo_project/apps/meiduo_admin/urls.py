@@ -31,8 +31,11 @@ urlpatterns = [
     re_path(r'meiduo_admin/skus/simple/$', goods.ImageView.as_view({'get': 'simple'})),
     # categories
     re_path(r'meiduo_admin/skus/categories/$', goods.CategoriesView.as_view({'get': 'list'})),
-    # categories
+    # 修改specs
     re_path(r'meiduo_admin/goods/(?P<pk>\d+)/specs/$', goods.SPUSpecView.as_view()),
+    # brand
+    re_path(r'meiduo_admin/goods/brands/simple/$', goods.BrandsSimpleView.as_view()),
+
 ]
 # -------------------自动生成路由----------------------- #
 # spu规格
