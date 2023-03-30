@@ -1,7 +1,7 @@
 from django.db import transaction
 from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
-from goods.models import SPUSpecification, SKUImage, SKU, GoodsCategory, SKUSpecification, SpecificationOption
+from goods.models import SPUSpecification, SKUImage, SKU, GoodsCategory, SKUSpecification, SpecificationOption, SPU
 from celery_tasks.generate_static.tasks import detail_page
 from django.conf import settings
 
@@ -134,7 +134,6 @@ class SKUSerializer(serializers.ModelSerializer):
                 detail_page.delay(new_sku.id)
                 return new_sku
 
-
     def create(self, validated_data):
         # 获取前端post数据
         specs = validated_data.get('specs')
@@ -169,12 +168,6 @@ class SKUSerializer(serializers.ModelSerializer):
                   'sales', 'is_launched', 'specs')
 
 
-class SPUSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SPUSpecification
-        fields = ()
-
-
 class SpecificationOptionSerializer(serializers.ModelSerializer):
     """SKU管理SpecificationOption规格选项序列化器"""
 
@@ -193,3 +186,17 @@ class PKSPUSpecificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = SPUSpecification
         fields = ('id', 'name', 'spu', 'spu_id', 'options')
+
+
+class SPUSerializer(serializers.ModelSerializer):
+    brand = serializers.StringRelatedField()
+    brand_id = serializers.IntegerField()
+    category1_id = serializers.IntegerField()
+    category2_id = serializers.IntegerField()
+    category3_id = serializers.IntegerField()
+
+    class Meta:
+        model = SPU
+        fields = (
+            'id', 'name', 'brand', 'brand_id', 'category1_id',
+            'category2_id', 'category3_id', 'sales', 'comments')

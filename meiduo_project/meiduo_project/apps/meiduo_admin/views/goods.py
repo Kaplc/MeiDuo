@@ -77,3 +77,11 @@ class ImageView(ModelViewSet):
         ser = goods_serializer.ImageToSKUSimpleSerializer(data, many=True)
 
         return Response(ser.data)
+
+
+class SPUView(ModelViewSet):
+    """spu管理"""
+    queryset = SPU.objects.all().order_by('id')
+    serializer_class = goods_serializer.SPUSerializer
+    pagination_class = PageNum
+    permission_classes = [IsAdminUser]

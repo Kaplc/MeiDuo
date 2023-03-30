@@ -47,3 +47,7 @@ urlpatterns += router.urls
 router = DefaultRouter()
 router.register('meiduo_admin/skus', goods.SKUView, basename='skus')
 urlpatterns += router.urls
+# SPU
+router = DefaultRouter()
+router.register('meiduo_admin/goods', goods.SPUView, basename='spus')
+urlpatterns += router.urls
