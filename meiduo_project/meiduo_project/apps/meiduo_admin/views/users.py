@@ -30,5 +30,6 @@ class UserView(ListCreateAPIView):
             queryset = User.objects.all().order_by('is_staff')
             return queryset
         else:
-            queryset = User.objects.filter(username=keyword).order_by('username')
+            # 模糊搜索
+            queryset = User.objects.filter(username__contains=keyword).order_by('username')
             return queryset

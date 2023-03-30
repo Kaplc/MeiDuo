@@ -27,8 +27,10 @@ urlpatterns = [
     # ---------------------商品管理--------------------- #
     # spu规格simple
     re_path(r'meiduo_admin/goods/simple/$', goods.SpecsView.as_view({'get': 'simple'})),
-    # sku图片simple
+    # sku简单信息
     re_path(r'meiduo_admin/skus/simple/$', goods.ImageView.as_view({'get': 'simple'})),
+    # categories
+    re_path(r'meiduo_admin/skus/categories/$', goods.CategoriesView.as_view({'get': 'list'})),
 ]
 # -------------------自动生成路由----------------------- #
 # spu规格
@@ -39,3 +41,12 @@ urlpatterns += router.urls
 router = DefaultRouter()
 router.register('meiduo_admin/skus/images', goods.ImageView, basename='images')
 urlpatterns += router.urls
+# SKU
+router = DefaultRouter()
+router.register('meiduo_admin/skus', goods.SKUView, basename='skus')
+urlpatterns += router.urls
+# categories
+# router = DefaultRouter()
+# router.register('meiduo_admin/skus/categories', goods.CategoriesView, basename='categories')
+# urlpatterns += router.urls
+# print(router.urls)

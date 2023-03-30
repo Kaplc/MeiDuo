@@ -1,8 +1,24 @@
 from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
-from goods.models import SPUSpecification, SKUImage, SKU
+from goods.models import SPUSpecification, SKUImage, SKU, GoodsCategory
 from celery_tasks.generate_static.tasks import detail_page
 from django.conf import settings
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    """Categories信息"""
+
+    class Meta:
+        model = GoodsCategory
+        fields = ('id', 'name')
+
+
+class SKUSerializer(serializers.ModelSerializer):
+    """所有sku信息"""
+
+    class Meta:
+        model = SKU
+        fields = '__all__'
 
 
 class SPUSpecificationSerializer(serializers.ModelSerializer):
@@ -70,8 +86,8 @@ class ImageSerializer(serializers.ModelSerializer):
         return update_sku_image
 
 
-class ImageSimpleSerializer(serializers.ModelSerializer):
-    """SKU信息序列化器(simple)"""
+class SKUSimpleSerializer(serializers.ModelSerializer):
+    """简单sku信息    """
 
     class Meta:
         model = SKU
