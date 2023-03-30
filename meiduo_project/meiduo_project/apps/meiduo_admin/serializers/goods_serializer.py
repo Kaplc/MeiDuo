@@ -1,7 +1,7 @@
 from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
 from goods.models import SPUSpecification, SKUImage, SKU
-from celery_tasks.generate_static.task import detail_page
+from celery_tasks.generate_static.tasks import detail_page
 
 
 class SPUSpecificationSerializer(serializers.ModelSerializer):
@@ -41,7 +41,8 @@ class ImageSerializer(serializers.ModelSerializer):
             image_url = ret['Remote file_id']
             sku_image = SKUImage.objects.create(image=image_url, sku_id=sku.id)
             sku_image.save()
-            detail_page(sku.id)
+            celery_res = detail_page.delay(sku.id)
+
         else:
             raise ValueError('上传失败')
 

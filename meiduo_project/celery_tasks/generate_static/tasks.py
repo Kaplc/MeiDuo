@@ -3,17 +3,20 @@ import os
 
 from django.conf import settings
 from django.shortcuts import render
+
+from celery_tasks.main import celery_app
 from goods.models import SKU
 
 import logging
 from goods.utils import get_categories, get_breadcrumb
 
-
 logger = logging.getLogger('django')
 
 
+# 使用装饰器定义任务
+@celery_app.task(name='detail_page')
 def detail_page(sku_id):
-    """展示商品详情页"""
+    """静态化商品详情页"""
     # 接收参数
     sku_id = sku_id
     # 校验参数, 获取sku信息
@@ -82,5 +85,3 @@ def detail_page(sku_id):
     with open(file_name, 'w') as f1:
         f1.write(response.content.decode())
     return response
-
-
