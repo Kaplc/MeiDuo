@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'oauth',  # QQ登录模块
     'areas',  # 省市区查询模块
     'goods',  # 商品信息模块
-    'haystack',  # 全文检索
+    # 'haystack',  # 全文检索
     'orders',  # 订单
     'payment',  # 支付
     'rest_framework',  # DRF
@@ -328,14 +328,14 @@ FDFS_CONF_DIR = '/home/kaplc/PycharmProjects/MeiDuo/meiduo_project/meiduo_projec
 
 # --------------------------haystack--------------------------- #
 # Haystack
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        # 'URL': 'https://611a78647w.oicp.vip/',
-        'URL': 'http://192.168.136.128:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
-        'INDEX_NAME': 'meiduo_mall',  # Elasticsearch建立的索引库的名称
-    },
-}
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+#         # 'URL': 'https://611a78647w.oicp.vip/',
+#         'URL': 'http://192.168.136.128:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
+#         'INDEX_NAME': 'meiduo_mall',  # Elasticsearch建立的索引库的名称
+#     },
+# }
 
 # 当添加、修改、删除数据时，自动生成索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

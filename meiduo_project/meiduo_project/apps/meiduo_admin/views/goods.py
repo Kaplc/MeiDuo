@@ -1,4 +1,3 @@
-from fdfs_client.client import Fdfs_client
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
@@ -6,13 +5,14 @@ from goods.models import SPUSpecification, SPU, SKUImage, SKU, GoodsCategory
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import goods_serializer
 from rest_framework.views import Response
-from django.db.models import Count
+
 import logging
 
 logger = logging.getLogger('django')
 
 
 class SPUSpecView(ListAPIView):
+    """sku管理显示spu规格"""
     serializer_class = goods_serializer.PKSPUSpecificationSerializer
 
     # 因为我们继承的是ListAPIView，在拓展类中是通过get_queryset获取数据，但是我们现在要获取的是规格信息，所以重写get_queryset
@@ -33,16 +33,22 @@ class CategoriesView(ModelViewSet):
 
 class SKUView(ModelViewSet):
     """sku管理"""
-    queryset = SKU.objects.all().order_by('id')
     # 指定序列化器
     serializer_class = goods_serializer.SKUSerializer
     pagination_class = PageNum
     permission_classes = [IsAdminUser]
 
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        if self.kwargs.get('pk') is None:
+            return SKU.objects.all().order_by('id')
+        else:
+            return SKU.objects.filter(id=self.kwargs.get('pk'))
+
 
 # 增删改查使用视图集
 class SpecsView(ModelViewSet):
-    """spu规格管理"""
+    """规格管理"""
     queryset = SPUSpecification.objects.all().order_by('id')
     # 指定序列化器
     serializer_class = goods_serializer.SPUSpecificationSerializer

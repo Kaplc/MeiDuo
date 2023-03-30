@@ -1,3 +1,4 @@
+from django.db import transaction
 from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
 from goods.models import SPUSpecification, SKUImage, SKU, GoodsCategory, SKUSpecification, SpecificationOption
@@ -100,7 +101,65 @@ class SKUSerializer(serializers.ModelSerializer):
     """所有sku信息"""
     spu = serializers.StringRelatedField()
     category = serializers.StringRelatedField()
-    specs = SKUSpecificationSerializer(read_only=True, many=True)
+    specs = SKUSpecificationSerializer(many=True)
+
+    # 返回模型类类的spu_id和category_id
+    spu_id = serializers.IntegerField()
+    category_id = serializers.IntegerField()
+
+    def update(self, instance, validated_data):
+
+        # 获取前端post数据
+        specs = validated_data.get('specs')
+        # sku保存时不用spec所以删除
+        del validated_data['specs']
+
+        with transaction.atomic():
+            # 开启事务
+            sid = transaction.savepoint()
+            try:
+                new_sku = SKU.objects.create(**validated_data)
+
+                for spec in specs:
+                    sku_specification = SKUSpecification.objects.create(sku=new_sku, spec_id=spec['spec_id'],
+                                                                        option_id=spec['option_id'])
+            except Exception as e:
+                # 捕获异常，说明数据库操作失败，进行回滚
+                transaction.savepoint_rollback(sid)
+                return serializers.ValidationError('数据库错误')
+            else:
+                # 没有捕获异常，数据库操作成功，进行提交
+                transaction.savepoint_commit(sid)
+                # 执行异步任务生成新的静态页面
+                detail_page.delay(new_sku.id)
+                return new_sku
+
+
+    def create(self, validated_data):
+        # 获取前端post数据
+        specs = validated_data.get('specs')
+        # sku保存时不用spec所以删除
+        del validated_data['specs']
+
+        with transaction.atomic():
+            # 开启事务
+            sid = transaction.savepoint()
+            try:
+                new_sku = SKU.objects.create(**validated_data)
+
+                for spec in specs:
+                    sku_specification = SKUSpecification.objects.create(sku=new_sku, spec_id=spec['spec_id'],
+                                                                        option_id=spec['option_id'])
+            except Exception as e:
+                # 捕获异常，说明数据库操作失败，进行回滚
+                transaction.savepoint_rollback(sid)
+                return serializers.ValidationError('数据库错误')
+            else:
+                # 没有捕获异常，数据库操作成功，进行提交
+                transaction.savepoint_commit(sid)
+                # 执行异步任务生成新的静态页面
+                detail_page.delay(new_sku.id)
+                return new_sku
 
     class Meta:
         model = SKU
