@@ -1,7 +1,7 @@
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
-from .views import statistical, users, goods, skus
+from .views import statistical, users, goods, skus, orders
 
 app_name = 'meiduo_admin'
 
@@ -53,4 +53,8 @@ urlpatterns += router.urls
 # SPU
 router = DefaultRouter()
 router.register('meiduo_admin/goods', goods.SPUView, basename='spus')
+urlpatterns += router.urls
+# orders
+router = DefaultRouter()
+router.register('meiduo_admin/orders', orders.OrdersView, basename='orders')
 urlpatterns += router.urls

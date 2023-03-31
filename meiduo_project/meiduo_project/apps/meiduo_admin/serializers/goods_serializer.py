@@ -1,10 +1,5 @@
-from django.db import transaction
-from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
-from goods.models import SPUSpecification, SKUImage, SKU, GoodsCategory, SKUSpecification, SpecificationOption \
-    , SPU, Brand
-from celery_tasks.generate_static.tasks import detail_page
-from django.conf import settings
+from goods.models import SPUSpecification, SpecificationOption, SPU, Brand
 
 
 # ------------------------------------------ #

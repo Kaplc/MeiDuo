@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SPUSpecification, SPU, SKUImage, SKU, GoodsCategory, Brand
+from goods.models import SPUSpecification, SPU, Brand
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import goods_serializer
 from rest_framework.views import Response
@@ -13,6 +13,7 @@ logger = logging.getLogger('django')
 
 class SPUSpecView(ListAPIView):
     """sku管理显示spu规格"""
+    permission_classes = [IsAdminUser]
     serializer_class = goods_serializer.PKSPUSpecificationSerializer
 
     # 因为我们继承的是ListAPIView，在拓展类中是通过get_queryset获取数据，但是我们现在要获取的是规格信息，所以重写get_queryset
@@ -21,12 +22,6 @@ class SPUSpecView(ListAPIView):
         pk = self.kwargs['pk']
         # 根据spu的id值关联过滤查询出规格信息
         return SPUSpecification.objects.filter(spu_id=self.kwargs['pk'])
-
-
-
-
-
-
 
 
 # 增删改查使用视图集

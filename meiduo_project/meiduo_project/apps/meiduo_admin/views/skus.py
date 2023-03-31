@@ -1,7 +1,6 @@
-from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SPUSpecification, SPU, SKUImage, SKU, GoodsCategory, Brand
+from goods.models import SKUImage, SKU, GoodsCategory
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import skus_serializer
 from rest_framework.views import Response
