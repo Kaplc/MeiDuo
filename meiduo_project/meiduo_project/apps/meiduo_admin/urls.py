@@ -25,16 +25,26 @@ urlpatterns = [
     # 查询，添加用户
     re_path(r'meiduo_admin/users/$', users.UserView.as_view()),
     # ---------------------商品管理--------------------- #
+    # -----------------goods------------------------- #
     # spu规格simple
     re_path(r'meiduo_admin/goods/simple/$', goods.SpecsView.as_view({'get': 'simple'})),
-    # sku简单信息
-    re_path(r'meiduo_admin/skus/simple/$', skus.ImageView.as_view({'get': 'simple'})),
-    # categories
-    re_path(r'meiduo_admin/skus/categories/$', skus.CategoriesView.as_view({'get': 'list'})),
     # 修改specs
     re_path(r'meiduo_admin/goods/(?P<pk>\d+)/specs/$', goods.SPUSpecView.as_view()),
     # brand
     re_path(r'meiduo_admin/goods/brands/simple/$', goods.BrandsSimpleView.as_view()),
+
+
+    # ---------------------skus--------------------- #
+    # sku简单信息
+    re_path(r'meiduo_admin/skus/simple/$', skus.ImageView.as_view({'get': 'simple'})),
+    # categories
+    re_path(r'meiduo_admin/skus/categories/$', skus.CategoriesView.as_view({'get': 'list'})),
+
+
+    # ------------------order------------------------ #
+    # 订单修改status
+    re_path(r'meiduo_admin/orders/(?P<pk>\d+)/status/$', orders.OrdersView.as_view({'put': 'status'})),
+
 
 ]
 # -------------------自动生成路由----------------------- #

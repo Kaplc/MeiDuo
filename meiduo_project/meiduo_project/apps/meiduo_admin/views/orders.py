@@ -1,8 +1,12 @@
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from orders.models import OrderInfo
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import orders_serializer
+import logging
+
+logger = logging.getLogger('django')
 
 
 class OrdersView(ModelViewSet):
@@ -19,3 +23,15 @@ class OrdersView(ModelViewSet):
             return OrderInfo.objects.all().order_by('order_id')
         else:
             return OrderInfo.objects.filter(order_id__contains=keyword).order_by('order_id')
+
+    def status(self, request, pk):
+        status = request.data.get('status')
+        try:
+            order = OrderInfo.objects.get(order_id=pk)
+            order.status = status
+            order.save()
+        except Exception as e:
+            logger.error(e)
+            return Response(status=500)
+        else:
+            return Response(status=201)
