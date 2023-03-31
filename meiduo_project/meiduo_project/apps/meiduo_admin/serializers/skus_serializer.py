@@ -100,11 +100,11 @@ class SKUSerializer(serializers.ModelSerializer):
             # 开启事务
             sid = transaction.savepoint()
             try:
-                old_sku = SKU.objects.create(**validated_data)
+                SKU.objects.filter(id=instance.id).update(**validated_data)
 
                 for spec in specs:
-                    sku_specification = SKUSpecification.objects.create(sku=old_sku, spec_id=spec['spec_id'],
-                                                                        option_id=spec['option_id'])
+                    SKUSpecification.objects.filter(id=instance.id).update(sku_id=instance.id, spec_id=spec['spec_id'],
+                                                                           option_id=spec['option_id'])
             except Exception as e:
                 # 捕获异常，说明数据库操作失败，进行回滚
                 transaction.savepoint_rollback(sid)
@@ -113,8 +113,9 @@ class SKUSerializer(serializers.ModelSerializer):
                 # 没有捕获异常，数据库操作成功，进行提交
                 transaction.savepoint_commit(sid)
                 # 执行异步任务生成新的静态页面
-                detail_page.delay(old_sku.id)
-                return old_sku
+                detail_page.delay(instance.id)
+                usku = SKU.objects.get(id=instance.id)
+                return SKU.objects.get(id=instance.id)
 
     def create(self, validated_data):
         # 获取前端post数据
