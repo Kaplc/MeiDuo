@@ -23,27 +23,10 @@ class SPUSpecView(ListAPIView):
         return SPUSpecification.objects.filter(spu_id=self.kwargs['pk'])
 
 
-class CategoriesView(ModelViewSet):
-    """分类"""
-    queryset = GoodsCategory.objects.filter(subs__id=None)
-    # 指定序列化器
-    serializer_class = goods_serializer.CategoriesSerializer
-    permission_classes = [IsAdminUser]
 
 
-class SKUView(ModelViewSet):
-    """sku管理"""
-    # 指定序列化器
-    serializer_class = goods_serializer.SKUSerializer
-    pagination_class = PageNum
-    permission_classes = [IsAdminUser]
 
-    def get_queryset(self):
-        pk = self.kwargs.get('pk')
-        if self.kwargs.get('pk') is None:
-            return SKU.objects.all().order_by('id')
-        else:
-            return SKU.objects.filter(id=self.kwargs.get('pk'))
+
 
 
 # 增删改查使用视图集
@@ -59,22 +42,6 @@ class SpecsView(ModelViewSet):
         """自定义返回方法"""
         data = SPU.objects.all().order_by('id')
         ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
-
-        return Response(ser.data)
-
-
-class ImageView(ModelViewSet):
-    """商品图片管理"""
-    queryset = SKUImage.objects.all().order_by('sku')
-    serializer_class = goods_serializer.ImageSerializer
-    pagination_class = PageNum
-    permission_classes = [IsAdminUser]
-
-    def simple(self, request):
-        """自定义返回方法"""
-        # 返回SKU信息
-        data = SKU.objects.all()
-        ser = goods_serializer.ImageToSKUSimpleSerializer(data, many=True)
 
         return Response(ser.data)
 

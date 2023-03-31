@@ -1,7 +1,7 @@
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
-from .views import statistical, users, goods
+from .views import statistical, users, goods, skus
 
 app_name = 'meiduo_admin'
 
@@ -28,9 +28,9 @@ urlpatterns = [
     # spu规格simple
     re_path(r'meiduo_admin/goods/simple/$', goods.SpecsView.as_view({'get': 'simple'})),
     # sku简单信息
-    re_path(r'meiduo_admin/skus/simple/$', goods.ImageView.as_view({'get': 'simple'})),
+    re_path(r'meiduo_admin/skus/simple/$', skus.ImageView.as_view({'get': 'simple'})),
     # categories
-    re_path(r'meiduo_admin/skus/categories/$', goods.CategoriesView.as_view({'get': 'list'})),
+    re_path(r'meiduo_admin/skus/categories/$', skus.CategoriesView.as_view({'get': 'list'})),
     # 修改specs
     re_path(r'meiduo_admin/goods/(?P<pk>\d+)/specs/$', goods.SPUSpecView.as_view()),
     # brand
@@ -44,11 +44,11 @@ router.register('meiduo_admin/goods/specs', goods.SpecsView, basename='specs')
 urlpatterns += router.urls
 # SKU图片
 router = DefaultRouter()
-router.register('meiduo_admin/skus/images', goods.ImageView, basename='images')
+router.register('meiduo_admin/skus/images', skus.ImageView, basename='images')
 urlpatterns += router.urls
 # SKU
 router = DefaultRouter()
-router.register('meiduo_admin/skus', goods.SKUView, basename='skus')
+router.register('meiduo_admin/skus', skus.SKUView, basename='skus')
 urlpatterns += router.urls
 # SPU
 router = DefaultRouter()
