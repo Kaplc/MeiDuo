@@ -1,7 +1,7 @@
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
-from .views import statistical, users, goods, skus, orders
+from .views import statistical, users, goods, skus, orders, permission
 
 app_name = 'meiduo_admin'
 
@@ -33,18 +33,15 @@ urlpatterns = [
     # brand
     re_path(r'meiduo_admin/goods/brands/simple/$', goods.BrandsSimpleView.as_view()),
 
-
     # ---------------------skus--------------------- #
     # sku简单信息
     re_path(r'meiduo_admin/skus/simple/$', skus.ImageView.as_view({'get': 'simple'})),
     # categories
     re_path(r'meiduo_admin/skus/categories/$', skus.CategoriesView.as_view({'get': 'list'})),
 
-
     # ------------------order------------------------ #
     # 订单修改status
     re_path(r'meiduo_admin/orders/(?P<pk>\d+)/status/$', orders.OrdersView.as_view({'put': 'status'})),
-
 
 ]
 # -------------------自动生成路由----------------------- #
@@ -52,19 +49,33 @@ urlpatterns = [
 router = DefaultRouter()
 router.register('meiduo_admin/goods/specs', goods.SpecsView, basename='specs')
 urlpatterns += router.urls
+
 # SKU图片
 router = DefaultRouter()
 router.register('meiduo_admin/skus/images', skus.ImageView, basename='images')
 urlpatterns += router.urls
+
 # SKU
 router = DefaultRouter()
 router.register('meiduo_admin/skus', skus.SKUView, basename='skus')
 urlpatterns += router.urls
+
 # SPU
 router = DefaultRouter()
 router.register('meiduo_admin/goods', goods.SPUView, basename='spus')
 urlpatterns += router.urls
+
 # orders
 router = DefaultRouter()
 router.register('meiduo_admin/orders', orders.OrdersView, basename='orders')
+urlpatterns += router.urls
+
+# permission/perms
+router = DefaultRouter()
+router.register('meiduo_admin/permission/perms', permission.PermissionView, basename='permission')
+urlpatterns += router.urls
+
+# permission/perms
+router = DefaultRouter()
+router.register('meiduo_admin/permission/content_types', permission.PermissionView, basename='permission')
 urlpatterns += router.urls

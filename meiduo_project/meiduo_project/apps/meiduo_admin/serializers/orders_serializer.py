@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from goods.models import SKU
 from orders.models import OrderInfo, OrderGoods
 
