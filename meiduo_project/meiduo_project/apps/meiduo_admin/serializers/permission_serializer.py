@@ -15,4 +15,4 @@ class ContentTypesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Permission
-        fields = ('content_types',)
+        fields = ('id', 'name',)

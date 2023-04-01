@@ -9,15 +9,21 @@ from meiduo_admin.serializers import permission_serializer
 
 
 class PermissionView(ModelViewSet):
-    queryset = Permission.objects.all()
+    """
+        permission/perms
+        权限表
+    """
+    queryset = Permission.objects.all().order_by('id')
     pagination_class = PageNum
     serializer_class = permission_serializer.PermissionSerializer
     permission_classes = [IsAdminUser]
 
 
-
 class ContentTypes(ModelViewSet):
-    queryset = Permission.objects.all()
-    pagination_class = PageNum
+    """
+        permission/content_types
+        权限表权限名称
+    """
+    queryset = Permission.objects.all().order_by('id')
     serializer_class = permission_serializer.ContentTypesSerializer
     permission_classes = [IsAdminUser]

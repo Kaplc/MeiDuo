@@ -70,12 +70,13 @@ router = DefaultRouter()
 router.register('meiduo_admin/orders', orders.OrdersView, basename='orders')
 urlpatterns += router.urls
 
+# ------------------------------------------ #
 # permission/perms
 router = DefaultRouter()
 router.register('meiduo_admin/permission/perms', permission.PermissionView, basename='permission')
 urlpatterns += router.urls
 
-# permission/perms
+# permission/content_types
 router = DefaultRouter()
-router.register('meiduo_admin/permission/content_types', permission.PermissionView, basename='permission')
+router.register('meiduo_admin/permission/content_types', permission.ContentTypes, basename='content_types')
 urlpatterns += router.urls
