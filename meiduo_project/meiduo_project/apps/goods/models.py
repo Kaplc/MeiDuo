@@ -8,6 +8,7 @@ class GoodsCategory(BaseModel):
     parent = models.ForeignKey('self', related_name='subs', null=True, blank=True, on_delete=models.CASCADE,
                                verbose_name='父类别')
 
+
     class Meta:
         db_table = 'tb_goods_category'
         verbose_name = '商品类别'
