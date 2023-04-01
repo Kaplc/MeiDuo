@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SPUSpecification, SPU, Brand, GoodsCategory
+from goods.models import SPUSpecification, SPU, Brand, GoodsCategory, SpecificationOption
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import goods_serializer
 from rest_framework.views import Response
@@ -37,6 +37,17 @@ class SpecsView(ModelViewSet):
     pagination_class = PageNum
     permission_classes = [IsAdminUser]
 
+    @action(methods=['get'], detail=False)
+    def simple(self, request):
+        """
+            goods/specs/simple/
+            自定义返回方法
+        """
+        data = SPUSpecification.objects.all().order_by('id')
+        ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
+
+        return Response(ser.data)
+
 
 class SPUView(ModelViewSet):
     """spu管理"""
@@ -61,6 +72,7 @@ class SPUView(ModelViewSet):
 
 
         """
+
 
 class BrandsSimpleView(ListAPIView):
     """BrandsSimple展示"""

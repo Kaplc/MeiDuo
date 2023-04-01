@@ -1,7 +1,7 @@
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
-from .views import statistical, users, goods, skus, orders, permission
+from .views import statistical, users, goods, skus, orders, permission, specs
 
 app_name = 'meiduo_admin'
 
@@ -59,7 +59,7 @@ urlpatterns = [
 
 # SPU
 router = DefaultRouter()
-router.register('meiduo_admin/goods/specs', goods.SpecsView, basename='specs')
+router.register('meiduo_admin/goods/specs', goods.SpecsView, basename='goods_specs')
 urlpatterns += router.urls
 
 # SPU
@@ -98,4 +98,10 @@ urlpatterns += router.urls
 # permission/admins
 router = DefaultRouter()
 router.register('meiduo_admin/permission/admins', permission.AdminView, basename='admins')
+urlpatterns += router.urls
+
+# ------------------specs------------------------ #
+# specs
+router = DefaultRouter()
+router.register('meiduo_admin/specs/options', specs.SpecsOptionsView, basename='specs')
 urlpatterns += router.urls

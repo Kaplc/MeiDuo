@@ -17,9 +17,14 @@ class SPUSpecificationSerializer(serializers.ModelSerializer):
 class SPUSpecificationSimpleSerializer(serializers.ModelSerializer):
     """规格管理SPUSpecification简单展示序列化器(simple)"""
 
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = SPUSpecification
         fields = ('id', 'name')
+
+    def get_name(self, obj):
+        return str(obj)
 
 
 # ------------------------------------------ #
