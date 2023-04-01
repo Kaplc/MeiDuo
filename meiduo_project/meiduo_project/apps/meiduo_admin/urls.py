@@ -43,10 +43,10 @@ urlpatterns = [
     # 订单修改status
     re_path(r'meiduo_admin/orders/(?P<pk>\d+)/status/$', orders.OrdersView.as_view({'put': 'status'})),
 
-    # ------------------------------------------ #
+    # --------------------permission---------------------- #
     # content_types
     re_path(r'meiduo_admin/permission/content_types/$', permission.PermissionView.as_view({'get': 'content_types'})),
-    # content_types
+    # simple
     re_path(r'meiduo_admin/permission/simple/$', permission.PermissionView.as_view({'get': 'content_types'})),
 
 ]
@@ -81,8 +81,6 @@ urlpatterns += router.urls
 router = DefaultRouter()
 router.register('meiduo_admin/permission/perms', permission.PermissionView, basename='permission')
 urlpatterns += router.urls
-
-
 
 # permission/groups
 router = DefaultRouter()
