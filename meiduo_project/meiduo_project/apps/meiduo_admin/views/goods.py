@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
@@ -36,13 +37,6 @@ class SpecsView(ModelViewSet):
     pagination_class = PageNum
     permission_classes = [IsAdminUser]
 
-    def simple(self, request):
-        """自定义返回方法"""
-        data = SPU.objects.all().order_by('id')
-        ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
-
-        return Response(ser.data)
-
 
 class SPUView(ModelViewSet):
     """spu管理"""
@@ -51,6 +45,22 @@ class SPUView(ModelViewSet):
     pagination_class = PageNum
     permission_classes = [IsAdminUser]
 
+    @action(methods=['get'], detail=False)
+    def simple(self, request):
+        """
+            goods/simple/
+            自定义返回方法
+        """
+        data = SPU.objects.all().order_by('id')
+        ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
+
+        return Response(ser.data)
+
+    def specs(self, request):
+        """
+
+
+        """
 
 class BrandsSimpleView(ListAPIView):
     """BrandsSimple展示"""
