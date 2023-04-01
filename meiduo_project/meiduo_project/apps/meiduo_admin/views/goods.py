@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SPUSpecification, SPU, Brand
+from goods.models import SPUSpecification, SPU, Brand, GoodsCategory
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import goods_serializer
 from rest_framework.views import Response
@@ -26,7 +26,10 @@ class SPUSpecView(ListAPIView):
 
 # 增删改查使用视图集
 class SpecsView(ModelViewSet):
-    """规格管理"""
+    """
+        goods/specs/
+        规格管理
+    """
     queryset = SPUSpecification.objects.all().order_by('id')
     # 指定序列化器
     serializer_class = goods_serializer.SPUSpecificationSerializer
@@ -54,3 +57,23 @@ class BrandsSimpleView(ListAPIView):
     queryset = Brand.objects.all().order_by('id')
     serializer_class = goods_serializer.BrandsSimpleSerializer
     permission_classes = [IsAdminUser]
+
+
+class CategoriesView(ModelViewSet):
+    """
+        goods/channel/categories/
+        添加spu展示分类
+    """
+
+    serializer_class = goods_serializer.CategoriesSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        if pk is None:
+            goods = GoodsCategory.objects.all().order_by('id')
+            return GoodsCategory.objects.all().order_by('id')
+        else:
+            goods1 = GoodsCategory.objects.all().order_by('id')
+            goods = GoodsCategory.objects.filter(id=pk).order_by('id')
+            return GoodsCategory.objects.filter(parent_id=pk)
