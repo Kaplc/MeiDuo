@@ -1,5 +1,4 @@
-from django.contrib.auth.models import Permission
-from rest_framework.decorators import action
+from django.contrib.auth.models import Permission, Group
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -18,12 +17,35 @@ class PermissionView(ModelViewSet):
     serializer_class = permission_serializer.PermissionSerializer
     permission_classes = [IsAdminUser]
 
+    def content_types(self, request):
+        """
+            permission/content_types
+            权限表权限名称
+        """
+        ser = permission_serializer.ContentTypesSerializer(Permission.objects.all().order_by('id'), many=True)
+        return Response(ser.data)
 
-class ContentTypes(ModelViewSet):
-    """
-        permission/content_types
-        权限表权限名称
-    """
+    def simple(self):
+        """
+            meiduo_admin/permission/simple/
+
+        """
+        ser = permission_serializer.ContentTypesSerializer(Permission.objects.all().order_by('id'), many=True)
+        return Response(ser.data)
+
+
+class ContentTypesView(ModelViewSet):
     queryset = Permission.objects.all().order_by('id')
     serializer_class = permission_serializer.ContentTypesSerializer
+    permission_classes = [IsAdminUser]
+
+
+class GroupsView(ModelViewSet):
+    """
+        permission/groups
+        权限组
+    """
+    queryset = Group.objects.all().order_by('id')
+    pagination_class = PageNum
+    serializer_class = permission_serializer.GroupSerializer
     permission_classes = [IsAdminUser]
