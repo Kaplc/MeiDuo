@@ -86,3 +86,8 @@ urlpatterns += router.urls
 router = DefaultRouter()
 router.register('meiduo_admin/permission/groups', permission.GroupsView, basename='groups')
 urlpatterns += router.urls
+
+# permission/admins
+router = DefaultRouter()
+router.register('meiduo_admin/permission/admins', permission.AdminView, basename='admins')
+urlpatterns += router.urls

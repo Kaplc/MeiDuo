@@ -1,10 +1,12 @@
 from django.contrib.auth.models import Permission, Group
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import permission_serializer
+from users.models import User
 
 
 class PermissionView(ModelViewSet):
@@ -48,4 +50,21 @@ class GroupsView(ModelViewSet):
     queryset = Group.objects.all().order_by('id')
     pagination_class = PageNum
     serializer_class = permission_serializer.GroupSerializer
+    permission_classes = [IsAdminUser]
+
+    # action装饰器， 前提自动生成路由路由前缀要相同
+    @action(methods=['get'], detail=False)
+    def simple(self, request):
+        ser = permission_serializer.GroupSerializer(Group.objects.all().order_by('id'), many=True)
+        return Response(ser.data)
+
+
+class AdminView(ModelViewSet):
+    """
+        permission/admins
+        管理员管理
+    """
+    queryset = User.objects.filter(is_staff=True).order_by('id')
+    pagination_class = PageNum
+    serializer_class = permission_serializer.AdminSerializer
     permission_classes = [IsAdminUser]
