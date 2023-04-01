@@ -57,7 +57,8 @@ class SPUSerializer(serializers.ModelSerializer):
         model = SPU
         fields = (
             'id', 'name', 'brand', 'brand_id', 'category1_id',
-            'category2_id', 'category3_id', 'sales', 'comments')
+            'category2_id', 'category3_id', 'sales', 'comments',
+            'desc_detail', 'desc_pack', 'desc_service')
 
 
 class BrandsSimpleSerializer(serializers.ModelSerializer):

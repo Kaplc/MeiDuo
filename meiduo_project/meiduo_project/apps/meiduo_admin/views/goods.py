@@ -18,7 +18,7 @@ class SPUSpecView(ListAPIView):
 
     # 因为我们继承的是ListAPIView，在拓展类中是通过get_queryset获取数据，但是我们现在要获取的是规格信息，所以重写get_queryset
     def get_queryset(self):
-        # 获取spuid值
+        # 获取spu_id值
         pk = self.kwargs['pk']
         # 根据spu的id值关联过滤查询出规格信息
         return SPUSpecification.objects.filter(spu_id=self.kwargs['pk'])
@@ -71,9 +71,6 @@ class CategoriesView(ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs.get('pk')
         if pk is None:
-            goods = GoodsCategory.objects.all().order_by('id')
             return GoodsCategory.objects.all().order_by('id')
         else:
-            goods1 = GoodsCategory.objects.all().order_by('id')
-            goods = GoodsCategory.objects.filter(id=pk).order_by('id')
             return GoodsCategory.objects.filter(parent_id=pk)
