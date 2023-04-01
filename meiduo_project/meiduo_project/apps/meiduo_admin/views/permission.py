@@ -11,7 +11,7 @@ from users.models import User
 
 class PermissionView(ModelViewSet):
     """
-        permission/perms
+        meiduo_admin/permission/perms
         权限表
     """
     queryset = Permission.objects.all().order_by('id')
@@ -21,7 +21,7 @@ class PermissionView(ModelViewSet):
 
     def content_types(self, request):
         """
-            permission/content_types
+            meiduo_admin/permission/content_types/
             权限表权限名称
         """
         ser = permission_serializer.ContentTypesSerializer(Permission.objects.all().order_by('id'), many=True)
@@ -44,7 +44,7 @@ class ContentTypesView(ModelViewSet):
 
 class GroupsView(ModelViewSet):
     """
-        permission/groups
+        meiduo_admin/permission/groups
         权限组
     """
     queryset = Group.objects.all().order_by('id')
@@ -61,7 +61,7 @@ class GroupsView(ModelViewSet):
 
 class AdminView(ModelViewSet):
     """
-        permission/admins
+        meiduo_admin/permission/admins
         管理员管理
     """
     queryset = User.objects.filter(is_staff=True).order_by('id')

@@ -10,7 +10,10 @@ logger = logging.getLogger('django')
 
 
 class OrdersView(ModelViewSet):
-    """订单"""
+    """
+        meiduo_admin/orders
+        订单
+    """
     # queryset = OrderInfo.objects.all().order_by('order_id')
     # 指定序列化器
     serializer_class = orders_serializer.OrdersSerializer
@@ -25,6 +28,10 @@ class OrdersView(ModelViewSet):
             return OrderInfo.objects.filter(order_id__contains=keyword).order_by('order_id')
 
     def status(self, request, pk):
+        """
+            meiduo_admin/orders/(?P<pk>\d+)/status/
+            订单状态
+        """
         status = request.data.get('status')
         try:
             order = OrderInfo.objects.get(order_id=pk)

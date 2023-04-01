@@ -57,9 +57,15 @@ urlpatterns = [
 ]
 # -------------------自动生成路由----------------------- #
 
-# SPU
+# ----------------------goods-------------------- #
+# good_specs
 router = DefaultRouter()
 router.register('meiduo_admin/goods/specs', goods.SpecsView, basename='goods_specs')
+urlpatterns += router.urls
+
+# channels
+router = DefaultRouter()
+router.register('meiduo_admin/goods/channels', goods.ChannelsView, basename='channels')
 urlpatterns += router.urls
 
 # SPU
@@ -67,7 +73,7 @@ router = DefaultRouter()
 router.register('meiduo_admin/goods', goods.SPUView, basename='spus')
 urlpatterns += router.urls
 
-# ------------------------------------------ #
+# --------------------skus---------------------- #
 # SKU图片
 router = DefaultRouter()
 router.register('meiduo_admin/skus/images', skus.ImageView, basename='images')
@@ -78,13 +84,13 @@ router = DefaultRouter()
 router.register('meiduo_admin/skus', skus.SKUView, basename='skus')
 urlpatterns += router.urls
 
-# ------------------------------------------ #
+# ---------------------orders--------------------- #
 # orders
 router = DefaultRouter()
 router.register('meiduo_admin/orders', orders.OrdersView, basename='orders')
 urlpatterns += router.urls
 
-# ------------------------------------------ #
+# ---------------------permission--------------------- #
 # permission/perms
 router = DefaultRouter()
 router.register('meiduo_admin/permission/perms', permission.PermissionView, basename='permission')

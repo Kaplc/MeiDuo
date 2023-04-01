@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SPUSpecification, SPU, Brand, GoodsCategory, SpecificationOption
+from goods.models import SPUSpecification, SPU, Brand, GoodsCategory, GoodsChannel
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import goods_serializer
 from rest_framework.views import Response
@@ -10,6 +10,17 @@ from rest_framework.views import Response
 import logging
 
 logger = logging.getLogger('django')
+
+
+class ChannelsView(ModelViewSet):
+    """
+        meiduo_admin/goods/channels
+        频道管理
+    """
+    queryset = GoodsChannel.objects.all().order_by('id')
+    serializer_class = goods_serializer.GoodsChannelSerializer
+    pagination_class = PageNum
+    permission_classes = [IsAdminUser]
 
 
 class SPUSpecView(ListAPIView):
@@ -41,7 +52,7 @@ class SpecsView(ModelViewSet):
     def simple(self, request):
         """
             goods/specs/simple/
-            自定义返回方法
+            SPU规格
         """
         data = SPUSpecification.objects.all().order_by('id')
         ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
@@ -50,7 +61,10 @@ class SpecsView(ModelViewSet):
 
 
 class SPUView(ModelViewSet):
-    """spu管理"""
+    """
+        meiduo_admin/goods
+        spu管理
+    """
     queryset = SPU.objects.all().order_by('id')
     serializer_class = goods_serializer.SPUSerializer
     pagination_class = PageNum
@@ -59,19 +73,13 @@ class SPUView(ModelViewSet):
     @action(methods=['get'], detail=False)
     def simple(self, request):
         """
-            goods/simple/
-            自定义返回方法
+            meiduo_admin/goods/simple/
+            SPU
         """
         data = SPU.objects.all().order_by('id')
         ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
 
         return Response(ser.data)
-
-    def specs(self, request):
-        """
-
-
-        """
 
 
 class BrandsSimpleView(ListAPIView):

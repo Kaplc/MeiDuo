@@ -1,10 +1,31 @@
 from rest_framework import serializers
-from goods.models import SPUSpecification, SpecificationOption, SPU, Brand, GoodsCategory
+from goods.models import SPUSpecification, SpecificationOption, SPU, Brand, GoodsCategory, GoodsChannel
 
 
 # ------------------------------------------ #
+class GoodsChannelSerializer(serializers.ModelSerializer):
+    """
+        meiduo_admin/goods/channels
+        频道管理
+    """
+    category = serializers.StringRelatedField()
+    category_id = serializers.IntegerField()
+    group_id = serializers.IntegerField()
+    group = serializers.StringRelatedField()
+
+    class Meta:
+        model = GoodsChannel
+        fields = ('id', 'category', 'sequence', 'url', 'group', 'group_id', 'category_id',)
+        #
+
+    # ------------------------------------------ #
+
+
 class SPUSpecificationSerializer(serializers.ModelSerializer):
-    """规格管理SPUSpecification序列化器"""
+    """
+
+        规格管理SPUSpecification序列化器
+    """
     # 关联查询
     spu = serializers.StringRelatedField()
     spu_id = serializers.IntegerField()
@@ -15,7 +36,10 @@ class SPUSpecificationSerializer(serializers.ModelSerializer):
 
 
 class SPUSpecificationSimpleSerializer(serializers.ModelSerializer):
-    """规格管理SPUSpecification简单展示序列化器(simple)"""
+    """
+
+        规格管理SPUSpecification简单展示序列化器(simple)
+    """
 
     name = serializers.SerializerMethodField()
 
@@ -31,7 +55,10 @@ class SPUSpecificationSimpleSerializer(serializers.ModelSerializer):
 
 
 class SpecificationOptionSerializer(serializers.ModelSerializer):
-    """SKU管理SpecificationOption规格选项序列化器"""
+    """
+
+        SKU管理SpecificationOption规格选项序列化器
+    """
 
     class Meta:
         model = SpecificationOption

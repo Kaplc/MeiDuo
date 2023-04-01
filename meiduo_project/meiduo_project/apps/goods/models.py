@@ -21,6 +21,7 @@ class GoodsChannelGroup(BaseModel):
     """商品频道组"""
     name = models.CharField(max_length=20, verbose_name='频道组名')
 
+
     class Meta:
         db_table = 'tb_channel_group'
         verbose_name = '商品频道组'

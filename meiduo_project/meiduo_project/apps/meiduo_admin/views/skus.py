@@ -19,7 +19,11 @@ class CategoriesView(ModelViewSet):
 
 
 class ImageView(ModelViewSet):
-    """商品图片管理"""
+    """
+        meiduo_admin/skus/images
+        商品图片管理
+    """
+
     queryset = SKUImage.objects.all().order_by('sku')
     serializer_class = skus_serializer.ImageSerializer
     pagination_class = PageNum
@@ -35,7 +39,10 @@ class ImageView(ModelViewSet):
 
 
 class SKUView(ModelViewSet):
-    """sku管理"""
+    """
+        meiduo_admin/skus
+        sku管理
+    """
     # 指定序列化器
     serializer_class = skus_serializer.SKUSerializer
     pagination_class = PageNum
