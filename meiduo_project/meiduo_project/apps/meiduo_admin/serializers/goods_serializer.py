@@ -121,3 +121,14 @@ class ChannelGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoodsChannelGroup
         fields = ('id', 'name')
+
+
+class BrandSerializer(serializers.ModelSerializer):
+    """
+
+        品牌展示
+    """
+
+    class Meta:
+        model = Brand
+        fields = '__all__'

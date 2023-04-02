@@ -114,3 +114,14 @@ class ChannelsGroupView(ModelViewSet):
     queryset = GoodsChannelGroup.objects.all().order_by('id')
     serializer_class = goods_serializer.ChannelGroupSerializer
     permission_classes = [IsAdminUser]
+
+
+class BrandView(ModelViewSet):
+    """
+        meiduo_admin/goods/brands/
+        展示品牌
+    """
+    queryset = Brand.objects.all().order_by('id')
+    serializer_class = goods_serializer.BrandSerializer
+    pagination_class = PageNum
+    permission_classes = [IsAdminUser]

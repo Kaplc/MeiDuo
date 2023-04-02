@@ -64,23 +64,28 @@ urlpatterns = [
 # ----------------------goods-------------------- #
 # good_specs
 router = DefaultRouter()
+router.register('meiduo_admin/goods/brands', goods.BrandView, basename='goods_brand')
+urlpatterns += router.urls
+
+# good_specs
+router = DefaultRouter()
 router.register('meiduo_admin/goods/specs', goods.SpecsView, basename='goods_specs')
 urlpatterns += router.urls
 
 # channels
 router = DefaultRouter()
-router.register('meiduo_admin/goods/channels', goods.ChannelsView, basename='channels')
+router.register('meiduo_admin/goods/channels', goods.ChannelsView, basename='goods_channels')
 urlpatterns += router.urls
 
 # SPU
 router = DefaultRouter()
-router.register('meiduo_admin/goods', goods.SPUView, basename='spus')
+router.register('meiduo_admin/goods', goods.SPUView, basename='goods_spus')
 urlpatterns += router.urls
 
 # --------------------skus---------------------- #
 # SKU图片
 router = DefaultRouter()
-router.register('meiduo_admin/skus/images', skus.ImageView, basename='images')
+router.register('meiduo_admin/skus/images', skus.ImageView, basename='skus_images')
 urlpatterns += router.urls
 
 # SKU
@@ -102,16 +107,16 @@ urlpatterns += router.urls
 
 # permission/groups
 router = DefaultRouter()
-router.register('meiduo_admin/permission/groups', permission.GroupsView, basename='groups')
+router.register('meiduo_admin/permission/groups', permission.GroupsView, basename='permission_groups')
 urlpatterns += router.urls
 
 # permission/admins
 router = DefaultRouter()
-router.register('meiduo_admin/permission/admins', permission.AdminView, basename='admins')
+router.register('meiduo_admin/permission/admins', permission.AdminView, basename='permission_admins')
 urlpatterns += router.urls
 
 # ------------------specs------------------------ #
 # specs
 router = DefaultRouter()
-router.register('meiduo_admin/specs/options', specs.SpecsOptionsView, basename='specs')
+router.register('meiduo_admin/specs/options', specs.SpecsOptionsView, basename='specs_option')
 urlpatterns += router.urls
