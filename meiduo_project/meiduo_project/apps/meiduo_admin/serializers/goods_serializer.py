@@ -158,7 +158,6 @@ class BrandSerializer(serializers.ModelSerializer):
                                                               logo=image_url,
                                                               first_letter=validated_data.get(
                                                                   'first_letter'))
-
         else:
             raise ValueError('上传失败')
 
