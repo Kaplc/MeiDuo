@@ -32,6 +32,8 @@ urlpatterns = [
     re_path(r'meiduo_admin/goods/(?P<pk>\d+)/specs/$', goods.SPUSpecView.as_view()),
     # brand
     re_path(r'meiduo_admin/goods/brands/simple/$', goods.BrandsSimpleView.as_view()),
+    # goods/categories
+    re_path(r'meiduo_admin/goods/categories/$', goods.CategoriesView.as_view({'get': 'list'})),
     # categories
     # 一级
     re_path(r'meiduo_admin/goods/channel/categories/$', goods.CategoriesView.as_view({'get': 'list'})),

@@ -8,7 +8,6 @@ class GoodsCategory(BaseModel):
     parent = models.ForeignKey('self', related_name='subs', null=True, blank=True, on_delete=models.CASCADE,
                                verbose_name='父类别')
 
-
     class Meta:
         db_table = 'tb_goods_category'
         verbose_name = '商品类别'
@@ -21,7 +20,6 @@ class GoodsCategory(BaseModel):
 class GoodsChannelGroup(BaseModel):
     """商品频道组"""
     name = models.CharField(max_length=20, verbose_name='频道组名')
-
 
     class Meta:
         db_table = 'tb_channel_group'

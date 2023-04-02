@@ -101,6 +101,6 @@ class CategoriesView(ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs.get('pk')
         if pk is None:
-            return GoodsCategory.objects.all().order_by('id')
+            return GoodsCategory.objects.filter(parent_id=None).order_by('id')
         else:
             return GoodsCategory.objects.filter(parent_id=pk)
