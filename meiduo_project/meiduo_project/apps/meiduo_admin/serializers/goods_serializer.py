@@ -1,3 +1,5 @@
+from django.conf import settings
+from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
 from goods.models import SPUSpecification, SpecificationOption, SPU, Brand, GoodsCategory, GoodsChannel, \
     GoodsChannelGroup
@@ -128,6 +130,23 @@ class BrandSerializer(serializers.ModelSerializer):
 
         品牌展示
     """
+
+    def create(self, validated_data):
+        image = validated_data['logo']
+        # 上传到fdfs
+        fdfs = Fdfs_client(settings.FDFS_CONF_DIR)
+        ret = fdfs.upload_by_buffer(image.read())
+        if ret['Status'] == 'Upload successed.':
+            image_url = ret['Remote file_id']
+            new_rand = Brand.objects.create(logo=image_url, name=validated_data.get('name'),
+                                            first_letter=validated_data.get('first_letter'))
+        else:
+            raise ValueError('上传失败')
+
+        return new_rand
+
+    def update(self, instance, validated_data):
+        pass
 
     class Meta:
         model = Brand
