@@ -146,7 +146,23 @@ class BrandSerializer(serializers.ModelSerializer):
         return new_rand
 
     def update(self, instance, validated_data):
-        pass
+        old_image_url = instance.logo.name
+        new_image_file = validated_data.get('logo')
+        # 上传到fdfs
+        fdfs = Fdfs_client(settings.FDFS_CONF_DIR)
+        # 修改上传的文件
+        ret = fdfs.upload_by_buffer(new_image_file.read(), old_image_url)
+        if ret['Status'] == 'Upload successed.':
+            image_url = ret['Remote file_id']
+            res = Brand.objects.filter(id=instance.id).update(name=validated_data.get('name'),
+                                                              logo=image_url,
+                                                              first_letter=validated_data.get(
+                                                                  'first_letter'))
+
+        else:
+            raise ValueError('上传失败')
+
+        return Brand.objects.get(id=instance.id)
 
     class Meta:
         model = Brand
