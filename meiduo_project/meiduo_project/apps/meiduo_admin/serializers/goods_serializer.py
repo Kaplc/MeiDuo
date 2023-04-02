@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from goods.models import SPUSpecification, SpecificationOption, SPU, Brand, GoodsCategory, GoodsChannel
+from goods.models import SPUSpecification, SpecificationOption, SPU, Brand, GoodsCategory, GoodsChannel, \
+    GoodsChannelGroup
 
 
 # ------------------------------------------ #
@@ -108,4 +109,15 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GoodsCategory
+        fields = ('id', 'name')
+
+
+class ChannelGroupSerializer(serializers.ModelSerializer):
+    """
+
+        展示频道组
+    """
+
+    class Meta:
+        model = GoodsChannelGroup
         fields = ('id', 'name')

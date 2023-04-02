@@ -39,11 +39,13 @@ urlpatterns = [
     re_path(r'meiduo_admin/goods/channel/categories/$', goods.CategoriesView.as_view({'get': 'list'})),
     # 二，三级
     re_path(r'meiduo_admin/goods/channel/categories/(?P<pk>\d+)/$', goods.CategoriesView.as_view({'get': 'list'})),
+    # channel_types
+    re_path(r'meiduo_admin/goods/channel_types/$', goods.ChannelsGroupView.as_view({'get': 'list'})),
 
     # ---------------------skus--------------------- #
     # sku简单信息
     re_path(r'meiduo_admin/skus/simple/$', skus.ImageView.as_view({'get': 'simple'})),
-    # categories
+    # skus/categories
     re_path(r'meiduo_admin/skus/categories/$', skus.CategoriesView.as_view({'get': 'list'})),
 
     # ------------------order------------------------ #

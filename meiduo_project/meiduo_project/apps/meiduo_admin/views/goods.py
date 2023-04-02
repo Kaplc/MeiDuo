@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SPUSpecification, SPU, Brand, GoodsCategory, GoodsChannel
+from goods.models import SPUSpecification, SPU, Brand, GoodsCategory, GoodsChannel, GoodsChannelGroup
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import goods_serializer
 from rest_framework.views import Response
@@ -91,7 +91,7 @@ class BrandsSimpleView(ListAPIView):
 
 class CategoriesView(ModelViewSet):
     """
-        goods/channel/categories/
+        meiduo_admin/goods/channel/categories/
         添加spu展示分类
     """
 
@@ -104,3 +104,13 @@ class CategoriesView(ModelViewSet):
             return GoodsCategory.objects.filter(parent_id=None).order_by('id')
         else:
             return GoodsCategory.objects.filter(parent_id=pk)
+
+
+class ChannelsGroupView(ModelViewSet):
+    """
+        meiduo_admin/goods/channel_types/
+        频道组
+    """
+    queryset = GoodsChannelGroup.objects.all().order_by('id')
+    serializer_class = goods_serializer.ChannelGroupSerializer
+    permission_classes = [IsAdminUser]
