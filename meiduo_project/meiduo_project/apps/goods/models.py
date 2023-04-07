@@ -174,3 +174,14 @@ class GoodsVisitCount(BaseModel):
         db_table = 'tb_goods_visit'
         verbose_name = '统计分类商品访问量'
         verbose_name_plural = verbose_name
+
+
+class SPUDetailImage(BaseModel):
+    """spu详情信息图片"""
+    spu = models.ForeignKey(SPU, on_delete=models.CASCADE, related_name='detail_image', verbose_name='商品SPU')
+    img_url = models.ImageField(max_length=200, default='', null=True, blank=True, verbose_name='详情图片')
+
+    class Meta:
+        db_table = 'tb_spu_detail_image'
+        verbose_name = 'spu详情信息图片'
+        verbose_name_plural = verbose_name

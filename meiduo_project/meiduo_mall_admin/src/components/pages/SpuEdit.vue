@@ -254,8 +254,8 @@ export default {
         this.btn_text = '上传中...';
         let fileValue = document.querySelector('.el-upload .el-upload__input');
         let fd = new FormData();
-        fd.append('image', fileValue.files[0], fileValue.files[0].name);
-
+        fd.append('img_url', fileValue.files[0], fileValue.files[0].name);
+        fd.append('spu', this.edit_id)
         this.axios.post(cons.apis + '/goods/images/', fd, {
             headers: {
               'Authorization': 'JWT ' + token,
@@ -272,7 +272,7 @@ export default {
     },
     fnInsertPic(){
       var sImg = '<img src="' + this.upload_img_url + '">';
-      if(sImg=='/static/images/pic_bg.png'){
+      if(this.upload_img_url=='/static/images/pic_bg.png'){
         alert('请上传图片后，再插入图片！');
         return;
       }

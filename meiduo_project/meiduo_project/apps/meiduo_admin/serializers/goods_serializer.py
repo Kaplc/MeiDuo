@@ -2,7 +2,7 @@ from django.conf import settings
 from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
 from goods.models import SPUSpecification, SpecificationOption, SPU, Brand, GoodsCategory, GoodsChannel, \
-    GoodsChannelGroup
+    GoodsChannelGroup, SPUDetailImage
 
 
 # ------------------------------------------ #
@@ -127,7 +127,6 @@ class ChannelGroupSerializer(serializers.ModelSerializer):
 
 class BrandSerializer(serializers.ModelSerializer):
     """
-
         品牌展示
     """
 
@@ -166,3 +165,25 @@ class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = '__all__'
+
+
+class SPUEditUploadImageSerializer(serializers.ModelSerializer):
+    """spu编辑修改上传图片"""
+
+    def create(self, validated_data):
+        image = validated_data['img_url']
+        spu = validated_data['spu']
+        # 上传到fdfs
+        fdfs = Fdfs_client(settings.FDFS_CONF_DIR)
+        ret = fdfs.upload_by_buffer(image.read())
+        if ret['Status'] == 'Upload successed.':
+            image_url = ret['Remote file_id']
+            new_rand = SPUDetailImage.objects.create(img_url=image_url, spu=spu)
+        else:
+            raise ValueError('上传失败')
+
+        return new_rand
+
+    class Meta:
+        model = SPUDetailImage
+        fields = ('img_url', 'spu')

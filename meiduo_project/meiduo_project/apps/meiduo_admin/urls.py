@@ -34,6 +34,8 @@ urlpatterns = [
     re_path(r'meiduo_admin/goods/brands/simple/$', goods.BrandsSimpleView.as_view()),
     # goods/categories
     re_path(r'meiduo_admin/goods/categories/$', goods.CategoriesView.as_view({'get': 'list'})),
+    # goods/image
+    re_path(r'meiduo_admin/goods/images/$', goods.SPUEditImageView.as_view({'post': 'create'})),
     # categories
     # 一级
     re_path(r'meiduo_admin/goods/channel/categories/$', goods.CategoriesView.as_view({'get': 'list'})),

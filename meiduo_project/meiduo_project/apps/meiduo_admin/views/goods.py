@@ -2,10 +2,11 @@ from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SPUSpecification, SPU, Brand, GoodsCategory, GoodsChannel, GoodsChannelGroup
+from rest_framework.views import Response
+
+from goods import models
 from meiduo_admin.utils import PageNum
 from meiduo_admin.serializers import goods_serializer
-from rest_framework.views import Response
 
 import logging
 
@@ -17,7 +18,7 @@ class ChannelsView(ModelViewSet):
         meiduo_admin/goods/channels
         频道管理
     """
-    queryset = GoodsChannel.objects.all().order_by('id')
+    queryset = models.GoodsChannel.objects.all().order_by('id')
     serializer_class = goods_serializer.GoodsChannelSerializer
     pagination_class = PageNum
     permission_classes = [IsAdminUser]
@@ -33,7 +34,7 @@ class SPUSpecView(ListAPIView):
         # 获取spu_id值
         pk = self.kwargs['pk']
         # 根据spu的id值关联过滤查询出规格信息
-        return SPUSpecification.objects.filter(spu_id=self.kwargs['pk'])
+        return models.SPUSpecification.objects.filter(spu_id=self.kwargs['pk'])
 
 
 # 增删改查使用视图集
@@ -42,7 +43,7 @@ class SpecsView(ModelViewSet):
         goods/specs/
         规格管理
     """
-    queryset = SPUSpecification.objects.all().order_by('id')
+    queryset = models.SPUSpecification.objects.all().order_by('id')
     # 指定序列化器
     serializer_class = goods_serializer.SPUSpecificationSerializer
     pagination_class = PageNum
@@ -54,7 +55,7 @@ class SpecsView(ModelViewSet):
             goods/specs/simple/
             SPU规格
         """
-        data = SPUSpecification.objects.all().order_by('id')
+        data = models.SPUSpecification.objects.all().order_by('id')
         ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
 
         return Response(ser.data)
@@ -65,7 +66,7 @@ class SPUView(ModelViewSet):
         meiduo_admin/goods
         spu管理
     """
-    queryset = SPU.objects.all().order_by('id')
+    queryset = models.SPU.objects.all().order_by('id')
     serializer_class = goods_serializer.SPUSerializer
     pagination_class = PageNum
     permission_classes = [IsAdminUser]
@@ -76,7 +77,7 @@ class SPUView(ModelViewSet):
             meiduo_admin/goods/simple/
             SPU
         """
-        data = SPU.objects.all().order_by('id')
+        data = models.SPU.objects.all().order_by('id')
         ser = goods_serializer.SPUSpecificationSimpleSerializer(data, many=True)
 
         return Response(ser.data)
@@ -84,7 +85,7 @@ class SPUView(ModelViewSet):
 
 class BrandsSimpleView(ListAPIView):
     """BrandsSimple展示"""
-    queryset = Brand.objects.all().order_by('id')
+    queryset = models.Brand.objects.all().order_by('id')
     serializer_class = goods_serializer.BrandsSimpleSerializer
     permission_classes = [IsAdminUser]
 
@@ -101,9 +102,9 @@ class CategoriesView(ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs.get('pk')
         if pk is None:
-            return GoodsCategory.objects.filter(parent_id=None).order_by('id')
+            return models.GoodsCategory.objects.filter(parent_id=None).order_by('id')
         else:
-            return GoodsCategory.objects.filter(parent_id=pk)
+            return models.GoodsCategory.objects.filter(parent_id=pk)
 
 
 class ChannelsGroupView(ModelViewSet):
@@ -111,7 +112,7 @@ class ChannelsGroupView(ModelViewSet):
         meiduo_admin/goods/channel_types/
         频道组
     """
-    queryset = GoodsChannelGroup.objects.all().order_by('id')
+    queryset = models.GoodsChannelGroup.objects.all().order_by('id')
     serializer_class = goods_serializer.ChannelGroupSerializer
     permission_classes = [IsAdminUser]
 
@@ -121,7 +122,14 @@ class BrandView(ModelViewSet):
         meiduo_admin/goods/brands/
         展示品牌
     """
-    queryset = Brand.objects.all().order_by('id')
+    queryset = models.Brand.objects.all().order_by('id')
     serializer_class = goods_serializer.BrandSerializer
     pagination_class = PageNum
+    permission_classes = [IsAdminUser]
+
+
+class SPUEditImageView(ModelViewSet):
+    """spu新增修改上传图片"""
+    queryset = models.SPUDetailImage.objects.all().order_by('id')
+    serializer_class = goods_serializer.SPUEditUploadImageSerializer
     permission_classes = [IsAdminUser]
