@@ -25,6 +25,7 @@ urlpatterns = [
     # 查询，添加用户
     re_path(r'meiduo_admin/users/$', users.UserView.as_view()),
     # ---------------------商品管理--------------------- #
+
     # -----------------goods------------------------- #
     # # spu规格
     # re_path(r'meiduo_admin/goods/specs/$', goods.SpecsView.as_view({'get': 'list'})),
